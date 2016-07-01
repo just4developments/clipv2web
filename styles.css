@@ -13,7 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+.keywords {
+  margin: 5px 0px;
+}
+.keywords a {
+  margin: 0px 2px;
+  zoom: 80%;
+}
 .inner {
   margin: auto;
   position: absolute;
@@ -22,18 +28,16 @@
 
 @media screen and (min-width: 768px) {
   #mainContent {
-    width: 768px;
-  }
-}
-@media screen and (min-width: 992px) {
-  #mainContent {
-    width: 992px;
+    width: 100%;
   }
 }
 @media screen and (min-width: 1200px) {
   #mainContent {
     width: 1200px;
   }
+}
+#mainContent{
+  background: white;
 }
 .android-content.mdl-layout__content{
   background-color: #efefef;

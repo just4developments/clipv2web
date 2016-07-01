@@ -4,6 +4,7 @@ import { VideoDetailsPageComponent, VideoPageComponent } from './video.component
 const routes: RouterConfig = [
   { path: '', component: VideoPageComponent },
   { path: 'v/:mode', component: VideoPageComponent },
+  { path: 'k/:keyword', component: VideoPageComponent },
   { path: 'search/:txtSearch', component: VideoPageComponent },
   { path: ':id', component: VideoDetailsPageComponent }
 ];

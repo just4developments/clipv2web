@@ -3,8 +3,8 @@ import { ROUTER_DIRECTIVES, Router } from '@angular/router';
 import {Location} from '@angular/common';
 
 import { VideoDetailsPageComponent, VideoPageComponent } from './video.component';
-import { FacebookLoginComponent } from './facebook.component';
-import { MainScrollDirective, MDL } from './video.directive';
+import { FacebookLoginComponent, FacebookComponent } from './facebook.component';
+import { MainScrollDirective, MDL, GoTop } from './video.directive';
 import { EventService } from './event.service';
 
 declare var componentHandler: any;
@@ -12,6 +12,7 @@ declare var componentHandler: any;
 @Component({
     selector: 'my-app',
     template: `
+      <facebook></facebook>
       <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header" mdl>
         <div class="android-header mdl-layout__header mdl-layout__header--waterfall">
           <div class="mdl-layout__header-row">
@@ -35,8 +36,9 @@ declare var componentHandler: any;
             <!-- Navigation -->
             <div class="android-navigation-container">
               <nav class="android-navigation mdl-navigation">
-                <a class="mdl-navigation__link mdl-typography--text-uppercase" href="/most">Hot nhất</a>
-                <a class="mdl-navigation__link mdl-typography--text-uppercase" href="/">Được đề cử</a>
+                <a class="mdl-navigation__link mdl-typography--text-uppercase" [routerLink]="['/']" go-top>Newest</a>
+                <a class="mdl-navigation__link mdl-typography--text-uppercase" [routerLink]="['/v/most']" go-top>Most</a>
+                <a class="mdl-navigation__link mdl-typography--text-uppercase" [routerLink]="['/v/hot']" go-top>Hot</a>
               </nav>
             </div>
             <span class="android-mobile-title mdl-layout-title">
@@ -73,7 +75,7 @@ declare var componentHandler: any;
         </div>  
       </div>
     `,
-    directives: [MainScrollDirective, MDL, ROUTER_DIRECTIVES, FacebookLoginComponent]
+    directives: [MainScrollDirective, MDL, GoTop, ROUTER_DIRECTIVES, FacebookLoginComponent, FacebookComponent]
 })
 export class AppComponent implements AfterViewInit {
   user: any;
@@ -87,7 +89,7 @@ export class AppComponent implements AfterViewInit {
     componentHandler.upgradeDom();
   }
 
-  login(event: any){
+  login(event: any){    
     if(event){
       this.user = event;
       setTimeout(() => {

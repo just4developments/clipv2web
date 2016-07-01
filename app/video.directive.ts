@@ -29,10 +29,38 @@ export class MainScrollDirective implements OnInit {
   	var e = event.target;
   	if(e.scrollTop + e.offsetHeight >= e.scrollHeight){
   		this.isNexting = 1;
-      this.eventService.emit({com: 'video-card-list', action: 'load'});
+      this.eventService.emit({com: 'video-card-list', action: 'append'});
   	}
   }
 
+}
+
+
+///////////////////////////////////////////////////////////////////
+declare var window: any;
+
+@Directive({
+    selector: '[go-top]'
+})    
+export class GoTop implements AfterViewInit {
+  container: any;
+
+  constructor(){
+    
+  }
+
+  ngAfterViewInit() {
+    this.container = window.document.querySelector('[scroll-bottom]');
+  }
+
+  @HostListener('click', ['$event']) 
+  onClick(event: any){
+    if(this.container.scrollTop !== 0){
+      setTimeout(()=>{
+        this.container.scrollTop = 0;
+      }, 200);    
+    }
+  }
 }
 
 ///////////////////////////////////////////////////////////////////
@@ -45,5 +73,22 @@ export class MDL implements AfterViewInit {
 	
   ngAfterViewInit() {
     componentHandler.upgradeAllRegistered();
+  }
+}
+
+///////////////////////////////////////////////////////////////////
+declare const FB:any;
+
+@Directive({
+    selector: '[facebook]'
+})    
+export class Facebook implements AfterViewInit {
+  
+  constructor() {    
+    
+  }
+
+  ngAfterViewInit() {
+    
   }
 }

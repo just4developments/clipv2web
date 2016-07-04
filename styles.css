@@ -13,6 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+.android-mobile-title,
+.android-title {
+  background: -webkit-linear-gradient(left, #b52f25, #717171);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;x */
+  font-weight: bold;
+}
+.android-title small {
+  font-size: 70%;
+  font-weight: normal;
+}
 .keywords {
   margin: 5px 0px;
 }
@@ -25,7 +36,6 @@
   position: absolute;
   top: 0; left: 0; bottom: 0; right: 0;
 }
-
 @media screen and (min-width: 768px) {
   #mainContent {
     width: 100%;
@@ -37,10 +47,15 @@
   }
 }
 #mainContent{
-  background: white;
+  background: #fff;
+  margin-top: 50px;
+  border-radius: 5px;
+  border: solid 1px #ccc;
+  margin-bottom: 50px;
+  padding-bottom: 50px;
 }
 .android-content.mdl-layout__content{
-  background-color: #efefef;
+  background-color: #e4e4e4;
 }
 .embed-responsive .embed-responsive-item, .embed-responsive iframe, .embed-responsive embed, .embed-responsive object, .embed-responsive video {
     position: absolute;
@@ -66,7 +81,7 @@
   height: 100%;
 }
 .main-color {
-  color: #cb6e67;
+  color: #333;
 }
 .des-color {
   color: #B6B6B6;
@@ -88,6 +103,10 @@ video-relation-item .mdl-list__item-text-body{
 }
 video-relation-list .mdl-card {
   width: 100%;
+}
+video-relation-list .mdl-card__title-text {
+  font-size: 20px;
+  color: #000;
 }
 video-card:hover,
 .mdl-list__item:hover {
@@ -127,15 +146,22 @@ video-relation-item .title {
   font-size: 13px;
   font-weight: 400;
 }
+video-relation-item .mdl-list__item-text-body,
+video-relation-item .mdl-list__item-text-body i {
+  font-size: 11px !important;
+  padding-top: 2px !important;
+  text-align: left;
+}
 img.rounded {
   border-radius: 4px;
 }
 a.nothing {
   text-decoration: none;
 }
-.icon-des,
-.icon-des i {
-  font-size: 12px !important;
+
+video-card .mdl-card__supporting-text,
+video-card .mdl-card__supporting-text i {
+  font-size: 11px;
 }
 /* --------------------------- */
 body {
@@ -148,12 +174,12 @@ a img{
 }
 
 ::-moz-selection {
-  background-color: #6ab344;
+  background-color: #333;
   color: #fff;
 }
 
 ::selection {
-  background-color: #6ab344;
+  background-color: #333;
   color: #fff;
 }
 
@@ -244,9 +270,12 @@ a img{
     background-color: transparent !important;
     border-bottom: 4px solid transparent;
   }
+    .android-navigation .mdl-navigation__link.actived{
+      color: #a8453e;
+    }
 
     .android-navigation .mdl-navigation__link:hover {
-      border-bottom: 4px solid #8bc34a;
+      border-bottom: 4px solid #a8453e;
     }
 
   .android-search-box {
@@ -280,7 +309,7 @@ a img{
   }
 
   .android-drawer span.mdl-navigation__link.mdl-navigation__link {
-    color: #8bc34a;
+    color: #a8453e;
   }
 
   .android-drawer .mdl-layout-title {
@@ -453,7 +482,7 @@ a img{
 
 .android-link {
   text-decoration: none;
-  color: #8bc34a !important;
+  color: #a8453e !important;
 }
 
   .android-link:hover {
@@ -563,7 +592,7 @@ a img{
 }
 
   .android-footer a:hover {
-    color: #8bc34a;
+    color: #a8453e;
   }
 
   .android-footer .mdl-mega-footer--top-section::after {

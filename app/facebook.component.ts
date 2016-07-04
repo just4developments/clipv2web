@@ -1,64 +1,101 @@
-import {Component, OnInit, EventEmitter, Output, ElementRef, AfterViewInit} from '@angular/core';
+import {Component, OnInit, EventEmitter, Output, ElementRef, AfterViewInit, OnDestroy} from '@angular/core';
 import {ROUTER_DIRECTIVES, Router} from "@angular/router";
+import {EventService} from "./event.service";
 
-declare const FB:any;
-declare const document: any;
-declare const location: any;
+declare var FB:any;
+declare var document: any;
+declare var location: any;
 const FANPAGE:string = "https://www.facebook.com/clipvnet/";
 
-@Component({
-    selector: 'facebook-login',
-    template: `
-      <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" (click)="onFacebookLoginClick()">
-        Facebook
-      </button>
-    `,
-    directives: [ROUTER_DIRECTIVES]
-})
-export class FacebookLoginComponent implements OnInit, AfterViewInit {
-  @Output()
-  login: EventEmitter<boolean> = new EventEmitter<boolean>();    
+class AbsFacebookComponent implements OnInit, OnDestroy {
+  gsub:any;
 
-  constructor() {    
-    
-  }
-
-  onFacebookLoginClick() {
-    FB.login();
-  }
-
-  ngAfterViewInit() {
+  constructor(protected eventService: EventService, protected e: ElementRef, protected tag: string) {    
     
   }
 
   ngOnInit() {
-    setTimeout(() => {
-      this.checkLogin(this);
-    }, 1000);
+    this.gsub = this.eventService.emitter.subscribe((data: any) => {
+      if(data.com === 'facebook'){
+        if(data.action === 'loaded') {             
+          this.render();
+        }
+      }
+    });
+    this.render();
   }
 
-  checkLogin(self: FacebookLoginComponent){    
-    try {
-      FB.getLoginStatus((resp: any) => {
-        if(resp.status === 'connected'){      
-          FB.api('/me', {
-            fields: ['email','name','age_range']
-          }, function(res: any) {
-            if (!res || res.error) {              
-              self.login.emit(null);
-            } else {
-              self.login.emit(res);
-            }
-          });
-        }else{
-          self.login.emit(null);
-        }      
+  ngOnDestroy(){
+    this.gsub.unsubscribe();
+  }
+
+  render(){
+    try{      
+      var fc: any = this.e.nativeElement.querySelector(this.tag);
+      FB.XFBML.parse(fc);
+    }catch(e){}
+  }
+}
+
+@Component({
+    selector: 'facebook-login',
+    template: `
+      <button class="mdl-button mdl-js-button mdl-button--colored" (click)="onFacebookLoginClick()">
+        Login
+      </button>
+    `,
+    directives: [ROUTER_DIRECTIVES]
+})
+export class FacebookLoginComponent implements OnInit, OnDestroy {
+  gsub:any;
+
+  constructor(private eventService: EventService) {    
+    
+  }
+
+  onFacebookLoginClick() {
+    var self: FacebookLoginComponent = this;
+    FB.login((resp: any) => {
+      this.getInfor(self, resp);
+    }, {scope: 'publish_actions'});
+  }
+
+  ngOnInit() {
+    this.gsub = this.eventService.emitter.subscribe((data: any) => {
+      if(data.com === 'facebook'){
+        if(data.action === 'loaded') {             
+          this.loginCallback();
+        }
+      }
+    });
+  }
+
+  ngOnDestroy(){
+    this.gsub.unsubscribe();
+  }
+
+  loginCallback(){    
+    var self: FacebookLoginComponent = this;
+    FB.getLoginStatus((resp: any) => {
+      console.log(resp);
+      self.getInfor(self, resp);      
+    });
+  }
+
+  getInfor(self: FacebookLoginComponent, resp: any){
+    if(resp.status === 'connected'){      
+      FB.api('/me', {
+        fields: ['email','name','age_range']
+      }, function(res: any) {
+        if (!res || res.error) {
+          self.eventService.emit({com: 'facebook', action: 'login'});
+        } else {
+          self.eventService.emit({com: 'facebook', action: 'login', data: res});
+        }
       });
-    }catch(e){
-      setTimeout(() => {
-        this.checkLogin(self);
-      }, 200);
-    }    
+    }else{
+      self.eventService.emit({com: 'facebook', action: 'login'});
+    }
   }
 }
 
@@ -67,7 +104,10 @@ export class FacebookLoginComponent implements OnInit, AfterViewInit {
     template: '<div class="fb-page" data-href="' + FANPAGE + '" data-tabs="timeline" data-height="70" data-small-header="false" data-adapt-container-width="true" data-hide-cover="true" data-show-facepile="false"><blockquote cite="' + FANPAGE + '" class="fb-xfbml-parse-ignore"><a href="' + FANPAGE + '">Clipvnet.com</a></blockquote></div>',
     directives: [ROUTER_DIRECTIVES]
 })
-export class FacebookPageComponent {
+export class FacebookPageComponent extends AbsFacebookComponent {
+  constructor(protected eventService: EventService, protected e: ElementRef) {    
+    super(eventService, e, 'facebook-page');
+  }
 }
 
 @Component({
@@ -75,45 +115,50 @@ export class FacebookPageComponent {
     template: '<div class="fb-like" data-href="' + FANPAGE + '" data-layout="button_count" data-action="like" data-size="small" data-show-faces="false" data-share="false"></div>',
     directives: [ROUTER_DIRECTIVES]
 })
-export class FacebookLikeComponent {
+export class FacebookLikeComponent extends AbsFacebookComponent {
+  constructor(protected eventService: EventService, protected e: ElementRef) {    
+    super(eventService, e, 'facebook-like');
+  }
 }
 
 @Component({
     selector: 'facebook-share',
-    template: '<div class="fb-share-button" data-href="' + location.href + '" data-layout="button" data-size="small" data-mobile-iframe="true"><a class="fb-xfbml-parse-ignore" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fdevelopers.facebook.com%2Fdocs%2Fplugins%2F&amp;src=sdkpreparse">Chia sẻ</a></div>',
+    template: `
+      <button class="mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect mdl-button--primary" (click)="share($event)">
+        <i class="material-icons">share</i>
+      </button>
+    `,
     directives: [ROUTER_DIRECTIVES]
 })
 export class FacebookShareComponent {
+  share(event:any){
+    FB.ui({
+      method: 'share_open_graph',
+      action_type: 'og.likes',
+      action_properties: JSON.stringify({
+        object: location.href,
+      })
+    }, function(res: any){
+      
+    });
+  }
 }
 
 @Component({
     selector: 'facebook-comment',
-    template: '<div class="fb-comments" data-href="' + location.href + '" data-width="100%" data-numposts="5"></div>',
+    template: '<div id="fb-comments" class="fb-comments" data-width="100%" data-numposts="5"></div>',
     directives: [ROUTER_DIRECTIVES]
 })
-export class FacebookCommentComponent {
+export class FacebookCommentComponent extends AbsFacebookComponent {
   link: string;
-  constructor(){
-    this.link = location.href;
+
+  constructor(protected eventService: EventService, protected e: ElementRef) {    
+    super(eventService, e, 'facebook-comment');
   }
-}
 
-
-@Component({
-    selector: 'facebook',
-    template: `
-      <div id="fb-root"></div>
-    `,
-    directives: [ROUTER_DIRECTIVES]
-})
-export class FacebookComponent {
-  appId: string = '850835344955953';
-  version: string = 'v2.6';
-
-  constructor(private e: ElementRef) {    
-    var js: any = document.createElement('script'); 
-    js.id = 'facebook-jssdk';
-    js.src = "//connect.facebook.net/vi_VN/sdk.js#xfbml=1&version=" + this.version + "&appId=" + this.appId;
-    e.nativeElement.appendChild(js);
+  ngOnInit(){
+    super.ngOnInit();
+    this.e.nativeElement.setAttribute('data-href', location.href);
   }
+
 }

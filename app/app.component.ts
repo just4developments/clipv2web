@@ -1,24 +1,27 @@
-import { Component, AfterViewInit } from '@angular/core';
+import { Input, Output, Component, AfterViewInit, NgZone, ViewChild, OnInit, OnDestroy } from '@angular/core';
 import { ROUTER_DIRECTIVES, Router } from '@angular/router';
 import {Location} from '@angular/common';
 
 import { VideoDetailsPageComponent, VideoPageComponent } from './video.component';
-import { FacebookLoginComponent, FacebookComponent } from './facebook.component';
+import { FacebookLoginComponent } from './facebook.component';
+import {UserMenuComponent} from './user.component';
 import { MainScrollDirective, MDL, GoTop } from './video.directive';
 import { EventService } from './event.service';
+import { SeoService } from './seo.service';
+import { VideoService } from './video.service';
 
 declare var componentHandler: any;
+declare var document: any;
 
 @Component({
     selector: 'my-app',
     template: `
-      <facebook></facebook>
       <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header" mdl>
         <div class="android-header mdl-layout__header mdl-layout__header--waterfall">
           <div class="mdl-layout__header-row">
-            <span class="android-title mdl-layout-title">
-              <img class="android-logo-image" src="images/android-logo.png">
-            </span>
+            <a class="android-title mdl-layout-title" [routerLink]="['/']">
+              ClipVNet<small>.com</small>
+            </a>
             <!-- Add spacer, to align navigation to the right in desktop -->
             <div class="android-header-spacer mdl-layout-spacer"></div>
             <div class="android-search-box mdl-textfield mdl-js-textfield mdl-textfield--expandable mdl-textfield--floating-label mdl-textfield--align-right mdl-textfield--full-width">
@@ -31,26 +34,24 @@ declare var componentHandler: any;
               <div class="mdl-textfield__expandable-holder">
                 <input class="mdl-textfield__input" type="text" id="search-field" [(ngModel)]="txtSearch" (keypress)="search($event)">
               </div>              
-            </div>            
-            <facebook-login (login)="login($event)" *ngIf="!user"></facebook-login>
+            </div>
             <!-- Navigation -->
             <div class="android-navigation-container">
               <nav class="android-navigation mdl-navigation">
-                <a class="mdl-navigation__link mdl-typography--text-uppercase" [routerLink]="['/']" go-top>Newest</a>
-                <a class="mdl-navigation__link mdl-typography--text-uppercase" [routerLink]="['/v/most']" go-top>Most</a>
-                <a class="mdl-navigation__link mdl-typography--text-uppercase" [routerLink]="['/v/hot']" go-top>Hot</a>
+                <a class="mdl-navigation__link mdl-typography--text-uppercase {{actived('/')}}" [routerLink]="['/']" go-top>Mới nhất</a>
+                <a class="mdl-navigation__link mdl-typography--text-uppercase {{actived('/v/most')}}" [routerLink]="['/v/most']" go-top>Xem nhiều nhất</a>
+                <a class="mdl-navigation__link mdl-typography--text-uppercase {{actived('/v/hot')}}" [routerLink]="['/v/hot']" go-top>Hot nhất</a>
               </nav>
             </div>
-            <span class="android-mobile-title mdl-layout-title">
-              <img class="android-logo-image" src="images/android-logo.png">
-            </span>
-            <button class="android-more-button mdl-button mdl-js-button mdl-button--icon mdl-js-ripple-effect" id="more-button" *ngIf="user">
-              <i class="material-icons">more_vert</i>
-            </button>
-            <ul class="mdl-menu mdl-js-menu mdl-menu--bottom-right mdl-js-ripple-effect" for="more-button" *ngIf="user">
-              <li class="mdl-menu__item">{{user.name}}</li>
-              <li class="mdl-menu__item">Post</li>
-              <li disabled class="mdl-menu__item">Messages</li>
+            <a class="android-mobile-title mdl-layout-title" [routerLink]="['/']">
+              ClipVNet<small>.com</small>
+            </a>
+            <facebook-login *ngIf="!user" class="android-more-button"></facebook-login>
+            <a id="inbox-button" class="android-more-button mdl-js-ripple-effect" href="javascript: void(0)" *ngIf="user">
+              <span class="mdl-badge" data-badge="4">{{user.name}}</span>
+            </a>
+            <ul class="mdl-menu mdl-js-menu mdl-menu--bottom-right mdl-js-ripple-effect" for="inbox-button" *ngIf="user">
+              <user-menu [user]="user"></user-menu>
             </ul>
           </div>
         </div>
@@ -61,13 +62,16 @@ declare var componentHandler: any;
           <footer class="android-footer mdl-mega-footer" id="footer">
             <div class="mdl-mega-footer--top-section">
               <div class="mdl-mega-footer--right-section">
-                <a class="mdl-typography--font-light" href="#top">
+                <a class="mdl-typography--font-light" href="javascript: void(0);" go-top>
                   Back to Top
                   <i class="material-icons">expand_less</i>
                 </a>
               </div>
             </div>
-            <div class="mdl-mega-footer--middle-section">
+            <div class="keywords">
+              <a *ngFor="let k of keywords" style="float: left;" go-top class="mdl-button mdl-js-button" [routerLink]="['/k/'+k._id]">{{k.name}}</a>
+            </div>
+            <div class="mdl-mega-footer--middle-section" style="clear: both;">
               <p class="mdl-typography--font-light">Satellite imagery: © 2014 Astrium, DigitalGlobe</p>
               <p class="mdl-typography--font-light">Some features and devices may not be available in all areas</p>
             </div>
@@ -75,27 +79,61 @@ declare var componentHandler: any;
         </div>  
       </div>
     `,
-    directives: [MainScrollDirective, MDL, GoTop, ROUTER_DIRECTIVES, FacebookLoginComponent, FacebookComponent]
+    providers: [VideoService],
+    directives: [UserMenuComponent, MainScrollDirective, MDL, GoTop, ROUTER_DIRECTIVES, FacebookLoginComponent]
 })
-export class AppComponent implements AfterViewInit {
+export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
   user: any;
   txtSearch: string;
+  keywords: Array<any>;
+  gsub: any;
 
-	constructor(private eventService: EventService, private router: Router){
-		
+	constructor(private zone: NgZone, private videoService: VideoService, private eventService: EventService, private router: Router, private seoService: SeoService){
+		seoService.setTitle('Clipvnet');
+    seoService.setMetaDescription('Video vui hai giai tri');
+    seoService.setMetaRobots('Index, Follow');
+
+    this.videoService.getKeywords().subscribe(
+                 keywords => { this.keywords = keywords; },
+                 error =>  console.error(error));
 	}
+
+  ngOnInit(){
+    this.gsub = this.eventService.emitter.subscribe((data: any) => {
+      if(data.com === 'facebook'){
+        if(data.action === 'login'){
+          if(data.data){
+            this.zone.run(()=>{
+              this.user = data.data;
+            });
+          }else{
+            console.log('login failed');
+          }
+        }else if(data.action === 'logout'){
+          this.zone.run(()=>{
+            this.user = undefined;
+          });
+        }        
+      }
+    });
+  }
+
+  ngOnDestroy(){
+    this.gsub.unsubscribe();
+  }
+
+  actived(path: string){
+    return this.router.url === path ? 'actived' : '';
+  }
 
   ngAfterViewInit() {            
     componentHandler.upgradeDom();
   }
 
-  login(event: any){    
-    if(event){
-      this.user = event;
-      setTimeout(() => {
-        componentHandler.upgradeDom();
-      });      
-    }
+  login(user: any){   
+    setTimeout(() => {
+      
+    }); 
   }
 
   search(event: any){    

@@ -3,6 +3,7 @@ import { ROUTER_DIRECTIVES, ActivatedRoute, Router, Event, NavigationStart } fro
 import { SafeResourceUrl, DomSanitizationService } from '@angular/platform-browser';
 
 import { EventService } from './event.service';
+import { SeoService } from './seo.service';
 import { VideoCard, VideoService } from './video.service';
 import { GoTop } from './video.directive';
 import { FacebookCommentComponent, FacebookPageComponent, FacebookShareComponent, FacebookLikeComponent } from './facebook.component';
@@ -16,7 +17,7 @@ declare var componentHandler: any;
 @Component({
     selector: 'video-card',
     template: `
-    <a [routerLink]="['/'+item._id]" class="nothing">
+    <a [routerLink]="['/'+item._id]" class="nothing" go-top>
       <div class="mdl-card__title">
          <h4 class="mdl-card__title-text main-color">{{item.title}}</h4>
       </div>      
@@ -25,8 +26,8 @@ declare var componentHandler: any;
       </div>
       <div class="howlong"><i class="material-icons dp48">alarm</i>14p40"</div>
       <div class="mdl-card__supporting-text icon-des mdl-grid des-color">
-        <div class="mdl-cell mdl-cell--6-col mdl-cell--4-col-tablet mdl-cell--4-col-phone"><i class="material-icons dp48">tag_faces</i> Chủ xị</div>
-        <div class="mdl-cell mdl-cell--6-col mdl-cell--4-col-tablet mdl-cell--4-col-phone"><i class="material-icons dp48">alarm_on</i> 1 giờ trước</div>
+        <div class="mdl-cell mdl-cell--6-col mdl-cell--4-col-tablet mdl-cell--4-col-phone"><i class="material-icons dp48">tag_faces</i> {{item.creator}}</div>
+        <div class="mdl-cell mdl-cell--6-col mdl-cell--4-col-tablet mdl-cell--4-col-phone"><i class="material-icons dp48">alarm_on</i> {{item.nowOnTime}}</div>
       </div>
     </a>
     `,
@@ -38,7 +39,7 @@ declare var componentHandler: any;
       '[class.mdl-cell--4-col-tablet]': 'true',
       '[class.mdl-cell--4-col-phone]': 'true'
     },
-    directives: [ROUTER_DIRECTIVES]
+    directives: [GoTop, ROUTER_DIRECTIVES]
 })
 export class VideoCardComponent implements AfterViewInit { 
   @Input()
@@ -86,7 +87,6 @@ export class VideoCardLoadingComponent {
 export class VideoCardListComponent implements OnInit, OnDestroy, OnChanges, AfterViewInit { 
     isLoading: boolean = true;
     gsub:any;
-    rsub: any;
     @Input() filter:any;
 
     @ViewChild('viewContainer', {read: ViewContainerRef}) 
@@ -185,15 +185,15 @@ export class VideoCardListComponent implements OnInit, OnDestroy, OnChanges, Aft
         <div class="mdl-card__title mdl-card--expand">
           <h2 class="mdl-card__title-text">{{item.title}}</h2>
         </div>
-        <div class="mdl-card__supporting-text icon-des" style="width: initial;">          
+        <div class="mdl-card__supporting-text" style="width: initial;">          
           <div class="mdl-grid mdl-grid--no-spacing">
             <div class="mdl-cell mdl-cell--8-col mdl-cell--5-col-tablet mdl-cell--4-col-phone mdl-cell--top">
               <i class="material-icons dp48">tag_faces</i>
-              &nbsp;<small class="ng-binding">Chủ xị</small>&nbsp;&nbsp;
+              &nbsp;Chủ xị&nbsp;&nbsp;
               <i class="material-icons dp48">alarm_on</i>
-              &nbsp;<small class="ng-binding">1 giờ trước</small>&nbsp;&nbsp;
+              &nbsp;1 giờ trước&nbsp;&nbsp;
               <i class="material-icons dp48">alarm</i>
-              &nbsp;<small class="ng-binding">14p40"</small>&nbsp;&nbsp;
+              &nbsp;14p40"&nbsp;&nbsp;
             </div>
             <div class="mdl-cell mdl-cell--4-col mdl-cell--3-col-tablet mdl-cell--4-col-phone mdl-cell--top facebook-share" align="right">
               <facebook-share></facebook-share>
@@ -207,13 +207,15 @@ export class VideoCardListComponent implements OnInit, OnDestroy, OnChanges, Aft
           </video>
         </div>
         <div class="keywords">
-          <a *ngFor="let k of item.keywords" style="float: left;" class="mdl-button mdl-js-button mdl-button--raised" [routerLink]="['/k/'+k._id]">{{k.name}}</a>
+          <a *ngFor="let k of item.keywords" go-top style="float: left;" class="mdl-button mdl-js-button" [routerLink]="['/k/'+k._id]">{{k.name}}</a>
         </div>
+        <hr style="clear: both"/>
         <facebook-comment></facebook-comment>
       </div>
     `,
+    styles: ['.mdl-card__supporting-text, .mdl-card__supporting-text i {font-size: 12px}'],
     providers: [VideoService],
-    directives: [FacebookCommentComponent, FacebookShareComponent, ROUTER_DIRECTIVES]
+    directives: [GoTop, FacebookCommentComponent, FacebookShareComponent, ROUTER_DIRECTIVES]
 })
 export class VideoDetailsComponent implements OnInit, OnChanges { 
   @Input() id: string;  
@@ -221,7 +223,7 @@ export class VideoDetailsComponent implements OnInit, OnChanges {
   item: VideoCard;
   url: SafeResourceUrl;
 
-  constructor(private videoService: VideoService, private sanitizer: DomSanitizationService){
+  constructor(private videoService: VideoService, private sanitizer: DomSanitizationService, private seoService: SeoService){
     this.videoService.getKeywords().subscribe(
                  keywords => { this.keywords = keywords; },
                  error =>  console.error(error));
@@ -248,6 +250,8 @@ export class VideoDetailsComponent implements OnInit, OnChanges {
                       } 
                    }                   
                    if(this.item.youtubeid) this.url = this.sanitizer.bypassSecurityTrustResourceUrl(this.item.link);                   
+                   this.seoService.setTitle(this.item.title);
+                   this.seoService.setMetaDescription(this.item.title);
                  },
                  error =>  console.error(error));
   }
@@ -262,8 +266,8 @@ export class VideoDetailsComponent implements OnInit, OnChanges {
         <a class="mdl-list__item-primary-content nothing" [routerLink]="['/'+item._id]" go-top>
           <img src="{{item.image}}" width="80" style="float: left; margin-right: 5px;" class="rounded">       
           <div class="main-color title">{{item.title}}</div>
-          <span class="mdl-list__item-text-body">
-            <div class="icon-des des-color"><i class="material-icons dp48">alarm_on</i> 1 giờ trước</div>
+          <span class="mdl-list__item-text-body des-color">
+            <i class="material-icons dp48">alarm_on</i> {{item.nowOnTime}}
           </span>
         </a>
       </li>
@@ -286,7 +290,9 @@ export class VideoRelationItemComponent {
     template: `
       <div class="mdl-card mdl-shadow--2dp">
         <div class="mdl-card__title mdl-card--border">
-          <h2 class="mdl-card__title-text">{{title}}</h2>
+          <h6 class="mdl-card__title-text">{{title}}</h6>
+          <div class="mdl-layout-spacer"></div>
+          <i class="material-icons mdl-list__item-icon">videocam</i>
         </div>
         <ul class="mdl-list">
           <video-relation-item style="width: 100%" *ngFor="let v of videosRelation" [item]="v"></video-relation-item>
@@ -306,17 +312,17 @@ export class VideoRelationListComponent implements OnInit {
 
   ngOnInit(){
     if(this.filter.mode === 'most'){
-      this.title = 'Xem nhieu nhat';
+      this.title = 'Video xem nhiều nhất';
       this.videoService.getMostVideos({page: this.filter.query.page, rows: this.filter.query.rows}).subscribe(
                        videos => {this.videosRelation = videos;},
                        error =>  console.error(error));
     }else if(this.filter.mode === 'hot'){
-      this.title = 'Hot';
+      this.title = 'Video hot';
       this.videoService.getHotVideos({page: this.filter.query.page, rows: this.filter.query.rows}).subscribe(
                        videos => {this.videosRelation = videos;},
                        error =>  console.error(error));
     }else if(this.filter.mode === 'relation'){
-      this.title = 'Video lien quan';
+      this.title = 'Video liên quan';
       this.videoService.getRelateVideos(this.filter.query.id, {page: this.filter.query.page, rows: this.filter.query.rows}).subscribe(
                        videos => {this.videosRelation = videos;},
                        error =>  console.error(error));  

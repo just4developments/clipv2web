@@ -8,6 +8,7 @@ export class VideoCard {
   id: string;
   link: string;
   title: string;
+  utitle: string;
   image: string;
   creator: string;
   updateat: Date;
@@ -15,6 +16,7 @@ export class VideoCard {
   youtubeid: string;
   viewcount: number;
   keywords: Array<any>;
+  nowOnTime: string;
 }
 
 @Injectable()
@@ -23,57 +25,80 @@ export class VideoService {
 
 	}
 
+  fromNowOn(v:any){
+    if(!v) return v;
+    var now = new Date();
+    for(var i in v){
+      var t = (now.getTime() - new Date(v[i].updateat).getTime());
+      var str = '';
+      t = Math.floor(t/1000/60/60/24);
+      if(t > 0) str = t + ' ngày';
+      else {
+        t = Math.floor(t/1000/60/60);
+        if(t > 0) str = t + ' giờ';
+        else {
+          t = Math.floor(t/1000/60);
+          if(t > 0) str = t + ' phút';
+          else {
+            t = Math.floor(t/1000);
+            if(t > 0) str = t + ' giây';
+          }
+        }
+      }      
+      v[i].nowOnTime = str + ' trước';
+      console.log(v[i]);
+    }
+    
+    return v;
+  }
+
   searchVideos(txtSearch: string, meta:any): Observable<VideoCard[]> {
     return this.http.get('http://localhost:8000/video/search?txtSearch=' + txtSearch + '&page=' + meta.page + "&rows=" + meta.rows)
-          .map(this.extractData)
+          .map((res) => { return this.fromNowOn(res.json()); } )
           .catch(this.handleError);
   }
 
   getKeywords(){
     return this.http.get('http://localhost:8000/keywords')
-          .map(this.extractData)
+          .map((res) => { return res.json(); } )
           .catch(this.handleError);
   }
 
   getKeywordVideos(keyword: string, meta:any): Observable<VideoCard[]> {
     return this.http.get('http://localhost:8000/video/keyword?keyword=' + keyword + '&page=' + meta.page + "&rows=" + meta.rows)
-          .map(this.extractData)
+          .map((res) => { return res.json(); } )
           .catch(this.handleError);
   }
 
 	getNewestVideos(meta:any): Observable<VideoCard[]> {
 		return this.http.get('http://localhost:8000/video/newest?page=' + meta.page + "&rows=" + meta.rows)
-          .map(this.extractData)
+          .map((res) => { return this.fromNowOn(res.json()); } )
           .catch(this.handleError);
 	}
 
 	getMostVideos(meta:any): Observable<VideoCard[]> {
 		return this.http.get('http://localhost:8000/video/most?page=' + meta.page + "&rows=" + meta.rows)
-          .map(this.extractData)
+          .map((res) => { return this.fromNowOn(res.json()); } )
           .catch(this.handleError);
 	}
 
   getHotVideos(meta:any): Observable<VideoCard[]> {
     return this.http.get('http://localhost:8000/video/hot?page=' + meta.page + "&rows=" + meta.rows)
-          .map(this.extractData)
+          .map((res) => { return this.fromNowOn(res.json()); } )
           .catch(this.handleError);
   }
 
 	getRelateVideos(id: string, meta: any): Observable<VideoCard[]> {
 		return this.http.get('http://localhost:8000/video/relate?id=' + id + '&page=' + meta.page + "&rows=" + meta.rows)
-          .map(this.extractData)
+          .map((res) => { return this.fromNowOn(res.json()); } )
           .catch(this.handleError);
 	}	
 
 	getVideo(id: string): Observable<VideoCard>{
 		return this.http.get('http://localhost:8000/video/'+id)
-          .map(this.extractData)
+          .map((res) => { return res.json(); } )
           .catch(this.handleError);
 	}
-
-	private extractData(res: Response) {
-    return res.json();
-  }
   
   private handleError (error: any) {
     // In a real world app, we might use a remote logging infrastructure

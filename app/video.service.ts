@@ -19,6 +19,21 @@ export class VideoCard {
   nowOnTime: string;
 }
 
+export class VideoDetails {
+  id: string;
+  link: string;
+  title: string;
+  utitle: string;
+  image: string;
+  creator: string;
+  updateat: Date;
+  longtime: number;
+  youtubeid: string;
+  viewcount: number;
+  keywords: Array<any>;
+  nowOnTime: string;
+}
+
 @Injectable()
 export class VideoService {
 	constructor(private http: Http){
@@ -29,24 +44,23 @@ export class VideoService {
     if(!v) return v;
     var now = new Date();
     for(var i in v){
-      var t = (now.getTime() - new Date(v[i].updateat).getTime());
+      var t0 = (now.getTime() - new Date(v[i].updateat).getTime());
       var str = '';
-      t = Math.floor(t/1000/60/60/24);
+      var t = Math.floor(t0/1000/60/60/24);
       if(t > 0) str = t + ' ngày';
       else {
-        t = Math.floor(t/1000/60/60);
+        t = Math.floor(t0/1000/60/60);
         if(t > 0) str = t + ' giờ';
         else {
-          t = Math.floor(t/1000/60);
+          t = Math.floor(t0/1000/60);
           if(t > 0) str = t + ' phút';
           else {
-            t = Math.floor(t/1000);
+            t = Math.floor(t0/1000);
             if(t > 0) str = t + ' giây';
           }
         }
       }      
       v[i].nowOnTime = str + ' trước';
-      console.log(v[i]);
     }
     
     return v;
@@ -94,7 +108,7 @@ export class VideoService {
           .catch(this.handleError);
 	}	
 
-	getVideo(id: string): Observable<VideoCard>{
+	getVideo(id: string): Observable<VideoDetails>{
 		return this.http.get('http://localhost:8000/video/'+id)
           .map((res) => { return res.json(); } )
           .catch(this.handleError);

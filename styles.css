@@ -112,28 +112,28 @@ video-card:hover,
 .mdl-list__item:hover {
   background-color: #fff9f9;
 }
-video-card .mdl-card__title {
+video-card-item  .mdl-card__title {
   height: 56px !important;
   padding-bottom: 8px !important;
 }
-video-card .mdl-card__title-text {
+video-card-item  .mdl-card__title-text {
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
 }
-video-card .howlong i{
+video-card-item  .howlong i{
   float: left;
   margin-right: 2px;
   margin-top: 2px;
   font-weight: bold;
 }
-video-card .howlong {
+video-card-item  .howlong {
   padding: 0px 5px;
 }
-video-card .howlong,
-video-card .howlong i {
+video-card-item  .howlong,
+video-card-item  .howlong i {
   font-size: 13px;
   color: white;  
   text-shadow: 1px 1px 1px #000;  
@@ -159,8 +159,8 @@ a.nothing {
   text-decoration: none;
 }
 
-video-card .mdl-card__supporting-text,
-video-card .mdl-card__supporting-text i {
+video-card-item  .mdl-card__supporting-text,
+video-card-item  .mdl-card__supporting-text i {
   font-size: 11px;
 }
 /* --------------------------- */

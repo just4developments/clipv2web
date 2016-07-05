@@ -1,10 +1,10 @@
-import { Input, Output, Component, AfterViewInit, NgZone, ViewChild, OnInit, OnDestroy } from '@angular/core';
+import { Component, AfterViewInit, NgZone, OnInit, OnDestroy } from '@angular/core';
 import { ROUTER_DIRECTIVES, Router } from '@angular/router';
-import {Location} from '@angular/common';
 
-import { VideoDetailsPageComponent, VideoPageComponent } from './video.component';
+import { VideoDetailsPageComponent } from './video-details-page.component';
+import { VideoPageComponent } from './video-page.component';
 import { FacebookLoginComponent } from './facebook.component';
-import {UserMenuComponent} from './user.component';
+import { UserMenuComponent } from './user.component';
 import { MainScrollDirective, MDL, GoTop } from './video.directive';
 import { EventService } from './event.service';
 import { SeoService } from './seo.service';

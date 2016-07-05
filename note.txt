@@ -1,0 +1,1 @@
+db.clip.createIndex({"utitle":"text"})

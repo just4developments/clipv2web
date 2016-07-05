@@ -1,4 +1,4 @@
-import { Input, OnInit, Directive, Output, EventEmitter, ElementRef, HostListener, AfterViewInit } from '@angular/core';
+import { Input, OnInit, OnDestroy, Directive, Output, EventEmitter, ElementRef, HostListener, AfterViewInit } from '@angular/core';
 
 import { EventService } from './event.service';
 
@@ -7,29 +7,37 @@ import { EventService } from './event.service';
 @Directive({
   selector: '[scroll-bottom]'
 })
-export class MainScrollDirective implements OnInit {
+export class MainScrollDirective implements OnInit, OnDestroy {
 
-  isNexting: number = 0;
+  isLoadedData: boolean = true;
+  gsub: any;
  
   constructor(private eventService: EventService) {
     
   }
 
   ngOnInit() {
-    this.eventService.emitter.subscribe((data: any) => {
-      if(data.com === 'video-card-list' && data.action === 'loaded'){        
-         this.isNexting = 0;
+    this.gsub = this.eventService.emitter.subscribe((data: any) => {
+      if(data.com === 'video-card-list'){
+        if(data.action === 'loaded')
+          this.isLoadedData = true;
+        else if (data.action === 'stop')
+          this.isLoadedData = undefined;
       }
     });
+  }
+
+  ngOnDestroy(){
+    this.gsub.unsubscribe();
   }
  
   @HostListener('scroll', ['$event']) 
   onScroll(event: any) {
-  	if(this.isNexting) return;
+    if(!this.isLoadedData) return false;
   	var e = event.target;
   	if(e.scrollTop + e.offsetHeight >= e.scrollHeight){
-  		this.isNexting = 1;
-      this.eventService.emit({com: 'video-card-list', action: 'append'});
+      this.isLoadedData = false;
+      this.eventService.emit({com: 'video-card-list', action: 'append'});      
   	}
   }
 

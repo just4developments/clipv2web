@@ -7,11 +7,9 @@ import { FacebookLoginComponent } from './facebook.component';
 import { UserMenuComponent } from './user.component';
 import { MainScrollDirective, MDL, GoTop } from './video.directive';
 import { EventService } from './event.service';
-import { SeoService } from './seo.service';
 import { VideoService } from './video.service';
 
 declare var componentHandler: any;
-declare var document: any;
 
 @Component({
     selector: 'my-app',
@@ -88,12 +86,8 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
   keywords: Array<any>;
   gsub: any;
 
-	constructor(private zone: NgZone, private videoService: VideoService, private eventService: EventService, private router: Router, private seoService: SeoService){
-		seoService.setTitle('Clipvnet');
-    seoService.setMetaDescription('Video vui hai giai tri');
-    seoService.setMetaRobots('Index, Follow');
-
-    this.videoService.getKeywords().subscribe(
+	constructor(private zone: NgZone, private videoService: VideoService, private eventService: EventService, private router: Router){
+		this.videoService.getKeywords().subscribe(
                  keywords => { this.keywords = keywords; },
                  error =>  console.error(error));
 	}

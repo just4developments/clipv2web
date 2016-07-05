@@ -1,8 +1,8 @@
 import { Component, Input, OnInit, OnChanges, SimpleChange } from '@angular/core';
 import { ROUTER_DIRECTIVES} from '@angular/router';
 import { SafeResourceUrl, DomSanitizationService } from '@angular/platform-browser';
+import { Title } from '@angular/platform-browser';
 
-import { SeoService } from './seo.service';
 import { VideoDetails, VideoService } from './video.service';
 import { GoTop } from './video.directive';
 import { FacebookCommentComponent, FacebookShareComponent } from './facebook.component';
@@ -52,7 +52,7 @@ export class VideoDetailsComponent implements OnInit, OnChanges {
   item: VideoDetails;
   url: SafeResourceUrl;
 
-  constructor(private videoService: VideoService, private sanitizer: DomSanitizationService, private seoService: SeoService){
+  constructor(private videoService: VideoService, private sanitizer: DomSanitizationService, private title: Title){
     this.videoService.getKeywords().subscribe(
                  keywords => { this.keywords = keywords; },
                  error =>  console.error(error));
@@ -70,7 +70,8 @@ export class VideoDetailsComponent implements OnInit, OnChanges {
   loadVideo(){
     this.videoService.getVideo(this.id).subscribe(
                  (video: VideoDetails) => {
-                   this.item = video; 
+                   this.item = video;
+                   this.title.setTitle(this.item.title);
                    for(let i in this.item.keywords){
                       for(let all of this.keywords){
                         if(this.item.keywords[i] === all._id){
@@ -78,9 +79,7 @@ export class VideoDetailsComponent implements OnInit, OnChanges {
                         }
                       } 
                    }                   
-                   if(this.item.youtubeid) this.url = this.sanitizer.bypassSecurityTrustResourceUrl(this.item.link);                   
-                   this.seoService.setTitle(this.item.title);
-                   this.seoService.setMetaDescription(this.item.title);
+                   if(this.item.youtubeid) this.url = this.sanitizer.bypassSecurityTrustResourceUrl(this.item.link);                                      
                  },
                  error =>  console.error(error));
   }

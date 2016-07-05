@@ -3,7 +3,6 @@ import { ROUTER_DIRECTIVES, ActivatedRoute, Router, Event, NavigationStart } fro
 import { SafeResourceUrl, DomSanitizationService } from '@angular/platform-browser';
 
 import { EventService } from './event.service';
-import { SeoService } from './seo.service';
 import { VideoCard, VideoService } from './video.service';
 import { GoTop } from './video.directive';
 import { FacebookCommentComponent, FacebookPageComponent, FacebookShareComponent, FacebookLikeComponent } from './facebook.component';

@@ -1,19 +1,19 @@
-import * as path from 'path';
-import * as express from 'express';
-import * as bodyParser from 'body-parser';
+let path = require('path');
+let express = require('express');
+let bodyParser = require('body-parser');
 
 // Angular 2 Universal
 import 'angular2-universal/polyfills';
 import {
-provide,
-enableProdMode,
-expressEngine,
-REQUEST_URL,
-ORIGIN_URL,
-BASE_URL,
-NODE_ROUTER_PROVIDERS,
-NODE_HTTP_PROVIDERS,
-ExpressEngineConfig
+	provide,
+	enableProdMode,
+	expressEngine,
+	REQUEST_URL,
+	ORIGIN_URL,
+	BASE_URL,
+	NODE_ROUTER_PROVIDERS,
+	NODE_HTTP_PROVIDERS,
+	ExpressEngineConfig
 } from 'angular2-universal';
 
 // replace this line with your Angular 2 root component
@@ -32,34 +32,34 @@ app.set('view engine', 'html');
 app.use(bodyParser.json());
 
 function ngApp(req, res) {
-let baseUrl = '/';
-let url = req.originalUrl || '/';
+	let baseUrl = '/';
+	let url = req.originalUrl || '/';
 
-let config: ExpressEngineConfig = {
-directives: [ App ],
+	let config: ExpressEngineConfig = {
+		directives: [ App ],
 
-// dependencies shared among all requests to server
-platformProviders: [
-provide(ORIGIN_URL, {useValue: 'http://localhost:3000'}),
-provide(BASE_URL, {useValue: baseUrl}),
-],
+		// dependencies shared among all requests to server
+		platformProviders: [
+		provide(ORIGIN_URL, {useValue: 'http://localhost:3000'}),
+		provide(BASE_URL, {useValue: baseUrl}),
+		],
 
-// dependencies re-created for each request
-providers: [
-provide(REQUEST_URL, {useValue: url}),
-NODE_ROUTER_PROVIDERS,
-NODE_HTTP_PROVIDERS,
-],
+		// dependencies re-created for each request
+		providers: [
+		provide(REQUEST_URL, {useValue: url}),
+		NODE_ROUTER_PROVIDERS,
+		NODE_HTTP_PROVIDERS,
+		],
 
-// if true, server will wait for all async to resolve before returning response
-async: true,
+		// if true, server will wait for all async to resolve before returning response
+		async: true,
 
-// if you want preboot, you need to set selector for the app root
-// you can also include various preboot options here (explained in separate document)
-preboot: { appRoot: 'app' }
-};
+		// if you want preboot, you need to set selector for the app root
+		// you can also include various preboot options here (explained in separate document)
+		preboot: { appRoot: 'app' }
+	};
 
-res.render('index', config);
+	res.render('index', config);
 }
 
 // Serve static files
@@ -70,6 +70,6 @@ app.use(express.static(ROOT, {index: false}));
 app.use('*', ngApp);
 
 // Server
-app.listen(3000, () => {
-console.log('Listening on: http://localhost:3000');
+app.listen(3001, () => {
+console.log('Listening on: http://localhost:3001');
 });

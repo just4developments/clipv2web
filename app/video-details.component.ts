@@ -7,6 +7,8 @@ import { VideoDetails } from './video.service';
 import { GoTop } from './video.directive';
 import { FacebookCommentComponent, FacebookShareComponent } from './facebook.component';
 
+declare const location: any;
+
 @Component({
     selector: 'video-details',
     template: `
@@ -39,26 +41,24 @@ import { FacebookCommentComponent, FacebookShareComponent } from './facebook.com
           <a *ngFor="let k of item.keywords" go-top style="float: left;" class="mdl-button mdl-js-button" [routerLink]="['/k/'+k._id]">{{k.name}}</a>
         </div>
         <hr style="clear: both"/>
-        <facebook-comment></facebook-comment>
+        <facebook-comment [link]="locationHref"></facebook-comment>
       </div>
     `,
     styles: ['.mdl-card__supporting-text, .mdl-card__supporting-text i {font-size: 12px}'],    
     directives: [GoTop, FacebookCommentComponent, FacebookShareComponent, ROUTER_DIRECTIVES]
 })
-export class VideoDetailsComponent implements OnInit, OnChanges { 
+export class VideoDetailsComponent implements OnChanges { 
   @Input() item: VideoDetails;    
   url: SafeResourceUrl;
+  locationHref: string;
 
   constructor(private sanitizer: DomSanitizationService, private title: Title){
     
   }
 
   ngOnChanges(changes: {[propertyName: string]: SimpleChange}){
+    this.locationHref = location.href;
     this.title.setTitle(this.item.title);
     if(this.item.youtubeid) this.url = this.sanitizer.bypassSecurityTrustResourceUrl(this.item.link);
-  }
-
-  ngOnInit(){    
-    
   }
 }

@@ -13,6 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+/* body {
+  filter: blur(1px);
+  filter: url("blur.svg#gaussian_blur");
+  -webkit-filter: blur(1px);
+  -o-filter: blur(2px);
+}*/
 .android-mobile-title,
 .android-title {
   background: -webkit-linear-gradient(left, #b52f25, #717171);
@@ -36,9 +42,15 @@
   position: absolute;
   top: 0; left: 0; bottom: 0; right: 0;
 }
+.isLastAutoScroll {
+  height: 100px;
+}
 @media screen and (min-width: 768px) {
   #mainContent {
     width: 100%;
+  }
+  .isLastAutoScroll {
+    height: auto;
   }
 }
 @media screen and (min-width: 1200px) {

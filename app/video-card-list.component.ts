@@ -16,7 +16,7 @@ declare var componentHandler: any;
           <div #viewContainer></div>
           <video-card-loading [hidden]="!isLoading"></video-card-loading>
       </div>      
-      <div *ngIf="isLastAutoScroll" align="center">
+      <div *ngIf="isLastAutoScroll" align="center" class="isLastAutoScroll">
         <button class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored" go-top [routerLink]="['/']" [queryParams]="{page: page}">
           <i class="normal material-icons">hdr_weak</i>
           <i class="hover material-icons">hdr_strong</i>

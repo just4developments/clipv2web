@@ -20,7 +20,7 @@ declare var componentHandler: any;
       <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header" mdl>
         <div class="android-header mdl-layout__header mdl-layout__header--waterfall">
           <div class="mdl-layout__header-row">
-            <a class="android-title mdl-layout-title" [routerLink]="['/']">
+            <a class="android-title mdl-layout-title" [routerLink]="['/']" go-top>
               ClipVNet<small>.com</small>
             </a>
             <!-- Add spacer, to align navigation to the right in desktop -->

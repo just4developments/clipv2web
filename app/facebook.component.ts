@@ -1,4 +1,4 @@
-import {Component, OnInit, Input, EventEmitter, Output, ElementRef, AfterViewInit, OnDestroy} from '@angular/core';
+import {Component, OnInit, Input, EventEmitter, Output, ElementRef, AfterViewInit, OnDestroy, OnChanges, SimpleChange, Renderer} from '@angular/core';
 import {ROUTER_DIRECTIVES, Router} from "@angular/router";
 import {EventService} from "./event.service";
 
@@ -9,6 +9,7 @@ const FANPAGE:string = "https://www.facebook.com/clipvnet/";
 
 class AbsFacebookComponent implements OnInit, OnDestroy {
   gsub:any;
+  isRenderer: boolean;
 
   constructor(protected eventService: EventService, protected e: ElementRef, protected tag: string) {    
     
@@ -29,10 +30,12 @@ class AbsFacebookComponent implements OnInit, OnDestroy {
     this.gsub.unsubscribe();
   }
 
-  render(){
-    try{      
+  protected render(){
+    if(this.isRenderer) return;
+    try{
       var fc: any = this.e.nativeElement.querySelector(this.tag);
       FB.XFBML.parse(fc);
+      this.isRenderer =  true;
     }catch(e){}
   }
 }
@@ -140,21 +143,19 @@ export class FacebookShareComponent {
   share(event:any){
     let link = location.href;
     FB.ui({
-      method: 'share',
-      mobile_iframe: true,
-      href: link,
-      title: this.title,
-      picture: this.picture,
-      caption: this.caption,
-      description: this.description
-    },
-    (res: any) => {
-      if (res && !res.error_message) {
-        alert('Posting completed.');
-      } else {
-        alert('Error while posting.' + link);
-      }
-    });
+      method: 'share_open_graph',
+      action_type: 'og.shares',
+      action_properties: JSON.stringify({
+        object : {
+         'og:url': link,
+         'og:title': this.title,
+         'og:description': this.description,
+         'og:image': this.picture,
+         'og:caption': this.caption
+        }
+      })},(res: any) => {
+        if (!res || res.error_message) console.log(res);
+      });
   }
 }
 
@@ -163,16 +164,16 @@ export class FacebookShareComponent {
     template: '<div id="fb-comments" class="fb-comments" data-width="100%" data-numposts="5"></div>',
     directives: [ROUTER_DIRECTIVES]
 })
-export class FacebookCommentComponent extends AbsFacebookComponent {
-  link: string;
+export class FacebookCommentComponent extends AbsFacebookComponent implements OnChanges {
+  @Input() link: string;
 
-  constructor(protected eventService: EventService, protected e: ElementRef) {    
+  constructor(protected eventService: EventService, protected e: ElementRef, protected r: Renderer) {    
     super(eventService, e, 'facebook-comment');
   }
 
-  ngOnInit(){
-    super.ngOnInit();
-    this.e.nativeElement.setAttribute('data-href', location.href);
+  ngOnChanges(changes: {[propertyName: string]: SimpleChange}){ 
+    this.r.setElementAttribute(this.e.nativeElement, 'data-href', this.link);
+    this.render();
   }
 
 }

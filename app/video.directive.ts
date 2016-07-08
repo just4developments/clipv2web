@@ -9,7 +9,7 @@ import { EventService } from './event.service';
 })
 export class MainScrollDirective implements OnInit, OnDestroy {
 
-  isLoadedData: boolean = true;
+  isLoadedData: boolean;
   gsub: any;
  
   constructor(private eventService: EventService) {
@@ -19,10 +19,12 @@ export class MainScrollDirective implements OnInit, OnDestroy {
   ngOnInit() {
     this.gsub = this.eventService.emitter.subscribe((data: any) => {
       if(data.com === 'video-card-list'){
-        if(data.action === 'loaded')
+        if(this.isLoadedData === false && data.action === 'loaded')
           this.isLoadedData = true;
         else if (data.action === 'stop')
           this.isLoadedData = undefined;
+        else if(this.isLoadedData === undefined && data.action === 'start')
+          this.isLoadedData = false;
       }
     });
   }
@@ -33,12 +35,39 @@ export class MainScrollDirective implements OnInit, OnDestroy {
  
   @HostListener('scroll', ['$event']) 
   onScroll(event: any) {
-    if(!this.isLoadedData) return false;
+    if(!this.isLoadedData) return false;    
   	var e = event.target;
   	if(e.scrollTop + e.offsetHeight >= e.scrollHeight){
       this.isLoadedData = false;
       this.eventService.emit({com: 'video-card-list', action: 'append'});      
   	}
+  }
+
+}
+
+@Directive({
+  selector: '[enter]'
+})
+export class EnterDirective {
+  @Output('enter') enter: EventEmitter<any> = new EventEmitter<any>();
+ 
+  @HostListener('keypress', ['$event']) 
+  onScroll(event: any) {
+    if(event.keyCode === 13){      
+      this.enter.emit(null);
+    }
+  }
+
+}
+
+@Directive({
+  selector: '[select-when-focus]'
+})
+export class SelectWhenFocusDirective {
+  
+  @HostListener('focus', ['$event']) 
+  onScroll(event: any) {
+    event.target.select();
   }
 
 }

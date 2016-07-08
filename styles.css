@@ -46,6 +46,11 @@
     width: 1200px;
   }
 }
+.ellipsis-1{
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
 #mainContent{
   background: #fff;
   margin-top: 50px;
@@ -86,11 +91,21 @@
 .des-color {
   color: #B6B6B6;
 }
-.howlong {
-  position: relative;
-  float: right;
-  margin-top: -20px;
+user-list-video .mdl-card,
+video-relation-list .mdl-card {
+  width: 100%;
 }
+user-list-video .mdl-card__title-text,
+video-relation-list .mdl-card__title-text {
+  font-size: 20px;
+  color: #000;
+}
+user-list-video .mdl-list,
+video-relation-list .mdl-list {
+  padding: 0px;
+  margin: 0px;
+}
+user-list-video .title,
 video-relation-item .title {
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -98,15 +113,41 @@ video-relation-item .title {
   overflow: hidden;
   text-overflow: ellipsis;
 }
+user-list-video .mdl-list__item-text-body,
 video-relation-item .mdl-list__item-text-body{
   text-align: right;
 }
-video-relation-list .mdl-card {
-  width: 100%;
+user-list-video .title,
+video-relation-item .title {
+  font-size: 13px;
+  font-weight: 400;
 }
-video-relation-list .mdl-card__title-text {
-  font-size: 20px;
-  color: #000;
+user-list-video .mdl-list__item-text-body,
+user-list-video .mdl-list__item-text-body i,
+video-relation-item .mdl-list__item-text-body,
+video-relation-item .mdl-list__item-text-body i {
+  font-size: 11px !important;
+  padding-top: 2px !important;
+  text-align: left;
+}
+video-relation-item .howlong{
+  position: absolute;
+  color: #ccc;
+  bottom: -5px;
+  background-color: #0E0E0E;
+  border: solid 1px #000;
+  box-shadow: 1px 1px 3px #000;
+  border-radius: 0px 30px 30px 0px;
+  padding: 0px 2px;
+}
+video-relation-item .img-des {
+  float: left; 
+  margin-right: 5px; 
+  position: relative;
+}
+video-relation-item .howlong,
+video-relation-item .howlong i {
+  font-size: 9px !important;
 }
 video-card:hover,
 .mdl-list__item:hover {
@@ -131,26 +172,19 @@ video-card-item  .howlong i{
 }
 video-card-item  .howlong {
   padding: 0px 5px;
+  position: relative;
+  float: right;
+  margin-top: -22px;
+  color: #ccc;
+  background-color: #0E0E0E;
+  border: solid 1px #000;
+  border-radius: 30px 0px 0px 30px;
+  padding: 0px 2px;
 }
 video-card-item  .howlong,
 video-card-item  .howlong i {
   font-size: 13px;
-  color: white;  
-  text-shadow: 1px 1px 1px #000;  
-}
-video-relation-list .mdl-list {
-  padding: 0px;
-  margin: 0px;
-}
-video-relation-item .title {
-  font-size: 13px;
-  font-weight: 400;
-}
-video-relation-item .mdl-list__item-text-body,
-video-relation-item .mdl-list__item-text-body i {
-  font-size: 11px !important;
-  padding-top: 2px !important;
-  text-align: left;
+  color: #ccc;  
 }
 img.rounded {
   border-radius: 4px;

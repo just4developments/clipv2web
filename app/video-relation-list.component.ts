@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, OnChanges, SimpleChange } from '@angular/core';
 
 import { VideoCard, VideoService } from './video.service';
 import { VideoRelationItemComponent } from './video-relation-item.component';
@@ -20,8 +20,12 @@ import { VideoRelationItemComponent } from './video-relation-item.component';
     providers: [VideoService],
     directives: [VideoRelationItemComponent]
 })
-export class VideoRelationListComponent implements OnInit { 
-  @Input() filter: any;
+export class VideoRelationListComponent implements OnInit, OnChanges { 
+  @Input() mode: string;
+  @Input() page: number;
+  @Input() rows: number;
+  @Input() query: any = {};
+
   title: string;
   videosRelation: VideoCard[] = [];
   
@@ -29,22 +33,26 @@ export class VideoRelationListComponent implements OnInit {
     
   }
 
-  ngOnInit(){
-    if(this.filter.mode === 'most'){
-      this.title = 'Video xem nhiều nhất';
-      this.videoService.getMostVideos({page: this.filter.query.page, rows: this.filter.query.rows}).subscribe(
-                       (videos: Array<VideoCard>) => {this.videosRelation = videos;},
-                       error =>  console.error(error));
-    }else if(this.filter.mode === 'hot'){
-      this.title = 'Video hot';
-      this.videoService.getHotVideos({page: this.filter.query.page, rows: this.filter.query.rows}).subscribe(
-                       (videos: Array<VideoCard>) => {this.videosRelation = videos;},
-                       error =>  console.error(error));
-    }else if(this.filter.mode === 'relation'){
+  ngOnChanges(changes: {[propertyName: string]: SimpleChange}){    
+    if(this.mode === 'relation'){      
       this.title = 'Video liên quan';
-      this.videoService.getRelateVideos(this.filter.query.id, {page: this.filter.query.page, rows: this.filter.query.rows}).subscribe(
+      this.videoService.getRelateVideos(this.query.id, this.query.keywords, this.query.updateat, {page: this.page, rows: this.rows}).subscribe(
                        (videos: Array<VideoCard>) => {this.videosRelation = videos;},
                        error =>  console.error(error));  
+    }
+  }
+
+  ngOnInit(){
+    if(this.mode === 'most'){
+      this.title = 'Video xem nhiều nhất';
+      this.videoService.getMostVideos({page: this.page, rows: this.rows}).subscribe(
+                       (videos: Array<VideoCard>) => {this.videosRelation = videos;},
+                       error =>  console.error(error));
+    }else if(this.mode === 'hot'){
+      this.title = 'Video hot';
+      this.videoService.getHotVideos({page: this.page, rows: this.rows}).subscribe(
+                       (videos: Array<VideoCard>) => {this.videosRelation = videos;},
+                       error =>  console.error(error));
     }
   }
 }

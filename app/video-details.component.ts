@@ -3,7 +3,7 @@ import { ROUTER_DIRECTIVES} from '@angular/router';
 import { SafeResourceUrl, DomSanitizationService } from '@angular/platform-browser';
 import { Title } from '@angular/platform-browser';
 
-import { VideoDetails, VideoService } from './video.service';
+import { VideoDetails } from './video.service';
 import { GoTop } from './video.directive';
 import { FacebookCommentComponent, FacebookShareComponent } from './facebook.component';
 
@@ -18,14 +18,14 @@ import { FacebookCommentComponent, FacebookShareComponent } from './facebook.com
           <div class="mdl-grid mdl-grid--no-spacing">
             <div class="mdl-cell mdl-cell--8-col mdl-cell--5-col-tablet mdl-cell--4-col-phone mdl-cell--top">
               <i class="material-icons dp48">tag_faces</i>
-              &nbsp;Chủ xị&nbsp;&nbsp;
+              &nbsp;{{item.creator}}&nbsp;&nbsp;
               <i class="material-icons dp48">alarm_on</i>
-              &nbsp;1 giờ trước&nbsp;&nbsp;
+              &nbsp;{{item.nowOnTime}}&nbsp;&nbsp;
               <i class="material-icons dp48">alarm</i>
               &nbsp;14p40"&nbsp;&nbsp;
             </div>
             <div class="mdl-cell mdl-cell--4-col mdl-cell--3-col-tablet mdl-cell--4-col-phone mdl-cell--top facebook-share" align="right">
-              <facebook-share></facebook-share>
+              <facebook-share [title]="item.title" [description]=[item.title] [picture]="item.image" [caption]="abc"></facebook-share>
             </div>
           </div>
         </div>
@@ -42,45 +42,23 @@ import { FacebookCommentComponent, FacebookShareComponent } from './facebook.com
         <facebook-comment></facebook-comment>
       </div>
     `,
-    styles: ['.mdl-card__supporting-text, .mdl-card__supporting-text i {font-size: 12px}'],
-    providers: [VideoService],
+    styles: ['.mdl-card__supporting-text, .mdl-card__supporting-text i {font-size: 12px}'],    
     directives: [GoTop, FacebookCommentComponent, FacebookShareComponent, ROUTER_DIRECTIVES]
 })
 export class VideoDetailsComponent implements OnInit, OnChanges { 
-  @Input() id: string;  
-  keywords: Array<any>;
-  item: VideoDetails;
+  @Input() item: VideoDetails;    
   url: SafeResourceUrl;
 
-  constructor(private videoService: VideoService, private sanitizer: DomSanitizationService, private title: Title){
-    this.videoService.getKeywords().subscribe(
-                 keywords => { this.keywords = keywords; },
-                 error =>  console.error(error));
+  constructor(private sanitizer: DomSanitizationService, private title: Title){
+    
   }
 
   ngOnChanges(changes: {[propertyName: string]: SimpleChange}){
-    this.id = changes['id'].currentValue;
-    this.loadVideo();
+    this.title.setTitle(this.item.title);
+    if(this.item.youtubeid) this.url = this.sanitizer.bypassSecurityTrustResourceUrl(this.item.link);
   }
 
-  ngOnInit(){
-    this.loadVideo();
-  }
-
-  loadVideo(){
-    this.videoService.getVideo(this.id).subscribe(
-                 (video: VideoDetails) => {
-                   this.item = video;
-                   this.title.setTitle(this.item.title);
-                   for(let i in this.item.keywords){
-                      for(let all of this.keywords){
-                        if(this.item.keywords[i] === all._id){
-                          this.item.keywords[i] = all;
-                        }
-                      } 
-                   }                   
-                   if(this.item.youtubeid) this.url = this.sanitizer.bypassSecurityTrustResourceUrl(this.item.link);                                      
-                 },
-                 error =>  console.error(error));
+  ngOnInit(){    
+    
   }
 }

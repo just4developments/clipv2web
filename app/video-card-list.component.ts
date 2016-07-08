@@ -3,6 +3,7 @@ import { ROUTER_DIRECTIVES } from '@angular/router';
 
 import { EventService } from './event.service';
 import { VideoCard, VideoService } from './video.service';
+import { GoTop } from './video.directive';
 import { VideoCardItemComponent } from './video-card-item.component'
 import { VideoCardLoadingComponent } from './video-card-loading.component'
 
@@ -16,21 +17,30 @@ declare var componentHandler: any;
           <video-card-loading [hidden]="!isLoading"></video-card-loading>
       </div>      
       <div *ngIf="isLastAutoScroll" align="center">
-        <button class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored" [routerLink]="['/']" [queryParams]="{page: filter.query.page}">
-          <i class="material-icons">chevron_right</i>
+        <button class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored" go-top [routerLink]="['/']" [queryParams]="{page: page}">
+          <i class="normal material-icons">hdr_weak</i>
+          <i class="hover material-icons">hdr_strong</i>
         </button>
       </div>
     `,
-    styles: ['button { position: relative; margin-bottom: -90px; }'],
+    styles: [
+      'button { position: relative; margin-bottom: -90px; }', 
+      'button i.hover { display: none; }',
+      'button:hover i.hover { display: block; }',
+      'button:hover i.normal { display: none; }'
+    ],
     providers: [VideoService],
-    directives: [VideoCardItemComponent, VideoCardLoadingComponent, ROUTER_DIRECTIVES]
+    directives: [VideoCardItemComponent, VideoCardLoadingComponent, ROUTER_DIRECTIVES, GoTop]
 })
 export class VideoCardListComponent implements OnInit, OnDestroy, OnChanges, AfterViewInit { 
-    isLoading: boolean = true;
+    isLoading: boolean = false;
     gsub:any;
     isLastAutoScroll: boolean = false;
-    initPage:number = -1;
-    @Input() filter:any;
+    initPage:number = 1;
+    @Input() mode: string;
+    @Input() query: any;
+    @Input() page: number;
+    @Input() rows: number;
 
     @ViewChild('viewContainer', {read: ViewContainerRef}) 
     viewContainer:any;
@@ -43,23 +53,28 @@ export class VideoCardListComponent implements OnInit, OnDestroy, OnChanges, Aft
       componentHandler.upgradeDom();
     }
 
-    ngOnChanges(changes: {[propertyName: string]: SimpleChange}){      
-      console.log('changed');
+    ngOnChanges(changes: {[propertyName: string]: SimpleChange}){ 
+      this.eventService.emit({com: 'video-card-list', action: 'start'});
+      this.initPage = this.page;
+      this.isLastAutoScroll = false;
       this.clearContent(this);
-      this.nextPage(this);
+      this.nextPage(this, () => {
+        this.eventService.emit({com: 'video-card-list', action: 'loaded'});
+      });
     }
 
     ngOnInit(){
-      lskdajflkj
       this.gsub = this.eventService.emitter.subscribe((data: any) => {
         if(data.com === 'video-card-list'){
-          if(data.action === 'append') {
-            this.filter.query.page++;
-            this.isLoading = true;
-            this.nextPage(this);
-          }
-          else if(data.action === 'loaded') {
-            this.isLoading = false;
+          if(data.action === 'append') {            
+            this.page++;            
+            this.nextPage(this, () => {
+              this.eventService.emit({com: 'video-card-list', action: 'loaded'});
+              if(this.page > this.initPage && (this.page - this.initPage) % 2 === 0){
+                this.isLastAutoScroll = true;
+                return this.eventService.emit({com: 'video-card-list', action: 'stop'});
+              }              
+            });            
           }
         }
       });
@@ -69,35 +84,28 @@ export class VideoCardListComponent implements OnInit, OnDestroy, OnChanges, Aft
       this.gsub.unsubscribe();
     }
 
-    nextPage(self:VideoCardListComponent){
-      if(this.initPage < 0){
-        this.initPage = this.filter.query.page;
-      }else if(this.filter.query.page > this.initPage && (this.filter.query.page - this.initPage) % 2 === 0){
-        this.isLastAutoScroll = true;
-        this.initPage = -1;
-        console.log(this.initPage, this.filter.query.page, this.isLastAutoScroll);
-        return this.eventService.emit({com: 'video-card-list', action: 'stop'});
-      }      
-
-      if(self.filter.mode === 'most'){
-        self.videoService.getMostVideos({page: self.filter.query.page, rows: self.filter.query.rows}).subscribe((videos: Array<VideoCard>) => {
-          self.drawContent(self, videos);
+    nextPage(self:VideoCardListComponent, fcDone: any){
+      self.isLoading = true;
+      self.eventService.emit({com: 'page-loading', action: 1});
+      if(self.mode === 'most'){
+        self.videoService.getMostVideos({page: self.page, rows: self.rows}).subscribe((videos: Array<VideoCard>) => {
+          self.drawContent(self, videos, fcDone);
         }, self.drawError);
-      }else if(self.filter.mode === 'newest'){        
-        self.videoService.getNewestVideos({page: self.filter.query.page, rows: self.filter.query.rows, title: self.filter.query.title}).subscribe((videos: Array<VideoCard>) => {
-          self.drawContent(self, videos);
+      }else if(self.mode === 'newest'){        
+        self.videoService.getNewestVideos({page: self.page, rows: self.rows}).subscribe((videos: Array<VideoCard>) => {
+          self.drawContent(self, videos, fcDone);
         }, self.drawError);
-      }else if(self.filter.mode === 'hot'){
-        self.videoService.getHotVideos({page: self.filter.query.page, rows: self.filter.query.rows, title: self.filter.query.title}).subscribe((videos: Array<VideoCard>) => {
-          self.drawContent(self, videos);
+      }else if(self.mode === 'hot'){
+        self.videoService.getHotVideos({page: self.page, rows: self.rows}).subscribe((videos: Array<VideoCard>) => {
+          self.drawContent(self, videos, fcDone);
         }, self.drawError);
-      }else if(self.filter.mode === 'search'){
-        self.videoService.searchVideos(self.filter.query.txtSearch, {page: self.filter.query.page, rows: self.filter.query.rows}).subscribe((videos: Array<VideoCard>) => {
-          self.drawContent(self, videos);
+      }else if(self.mode === 'search'){
+        self.videoService.searchVideos(self.query.txtSearch, {page: self.page, rows: self.rows}).subscribe((videos: Array<VideoCard>) => {
+          self.drawContent(self, videos, fcDone);
         }, self.drawError);
-      }else if(self.filter.mode === 'keyword'){        
-        self.videoService.getKeywordVideos(self.filter.query.keyword, {page: self.filter.query.page, rows: self.filter.query.rows}).subscribe((videos: Array<VideoCard>) => {
-          self.drawContent(self, videos);
+      }else if(self.mode === 'keyword'){        
+        self.videoService.getKeywordVideos(self.query.keyword, {page: self.page, rows: self.rows}).subscribe((videos: Array<VideoCard>) => {
+          self.drawContent(self, videos, fcDone);
         }, self.drawError);
       }
     }
@@ -110,10 +118,9 @@ export class VideoCardListComponent implements OnInit, OnDestroy, OnChanges, Aft
       self.viewContainer.clear();
     }
 
-    drawContent(self: VideoCardListComponent, videos: Array<VideoCard>){            
+    drawContent(self: VideoCardListComponent, videos: Array<VideoCard>, fcDone: any){            
       if(videos.length === 0) {
-        this.filter.query.page;
-        this.isLoading = false;
+        this.isLoading = undefined;
         return;
       }
       self.cmpResolver.resolveComponent(VideoCardItemComponent)
@@ -123,7 +130,9 @@ export class VideoCardListComponent implements OnInit, OnDestroy, OnChanges, Aft
           var com: ComponentRef<VideoCardItemComponent> = self.viewContainer.createComponent(factory, index++, self.viewContainer.injector);
           com.instance.item = videos[i];
         }
-        self.eventService.emit({com: 'video-card-list', action: 'loaded', page: this.filter.query.page-1});
+        self.isLoading = false;
+        self.eventService.emit({com: 'page-loading', action: 0});
+        fcDone();        
       });      
    }
 }

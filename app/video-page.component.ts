@@ -11,71 +11,51 @@ import { FacebookPageComponent } from './facebook.component';
     template: `
       <div class="mdl-grid">
         <div class="mdl-cell mdl-cell--8-col mdl-cell--8-col-tablet mdl-cell--4-col-phone mdl-cell--top">                 
-          <video-card-list [filter]="filter.all"></video-card-list>          
+          <video-card-list [mode]="mode" [query]="query" [page]="page" [rows]="12"></video-card-list>          
         </div>
         <div                class="mdl-cell mdl-cell--4-col mdl-cell--8-col-tablet mdl-cell--4-col-phone mdl-cell--top">
           <facebook-page></facebook-page>
           <br/>
           <br/>
-          <video-relation-list [filter]="filter.most" [filter]=""></video-relation-list>
+          <video-relation-list [mode]="'most'" [page]="1" [rows]="5"></video-relation-list>
           <br/>
-          <video-relation-list [filter]="filter.hot"></video-relation-list>
+          <video-relation-list [mode]="'hot'" [page]="1" [rows]="5"></video-relation-list>
         </div>
       </div>
     `,
     directives: [VideoCardListComponent, VideoRelationListComponent, FacebookPageComponent]
 })
 export class VideoPageComponent implements OnInit, OnDestroy { 
-  filter:any;
   sub: any;
   qsub: any;
+  mode: string;
+  query: any = {};
+  page: number = 1;
 
   constructor(private router: Router, private route: ActivatedRoute, private title: Title){
-    this.filter = {};
-    this.filter.most = {
-      mode: 'most',
-      query: {
-        page: 1,        
-        rows: 5
-      }
-    };
-    this.filter.hot = {
-      mode: 'hot',
-      query: {
-        page: 1,        
-        rows: 5
-      }
-    };
+    
   }
 
-  ngOnInit() {
-    this.filter.all = {        
-      query: {
-        page: 1,
-        rows: 10,
-      }
-    };
+  ngOnInit() {    
     this.qsub = this.router.routerState.queryParams.subscribe((params:any) => {
-      console.log(1, params.page);
-      this.filter.all.query.page = params.page || 1;
-      console.log(2, this.filter.all.query.page);
+      this.page = +params.page || 1;      
     });
     this.sub = this.route.params.subscribe((params: any) => {
       var txtSearch: string = params['txtSearch'];      
       var keyword: string =  params['keyword'];            
       if(txtSearch){
-        this.filter.all.mode = 'search';
-        this.filter.all.query.txtSearch = txtSearch;
+        this.mode = 'search';
+        this.query.txtSearch = txtSearch;
         this.title.setTitle(txtSearch + '***');
       }else if(keyword){
-        this.filter.all.mode = 'keyword';
-        this.filter.all.query.keyword = keyword;
+        this.mode = 'keyword';
+        this.query.keyword = keyword;
         this.title.setTitle(keyword);
       }else {
-        this.filter.all.mode = params['mode'] || 'newest';
-        if(this.filter.all.mode === 'most'){
+        this.mode = params['mode'] || 'newest';
+        if(this.mode === 'most'){
           this.title.setTitle('Xem nhiều nhất');
-        }else if(this.filter.all.mode === 'hot'){
+        }else if(this.mode === 'hot'){
           this.title.setTitle('Clip HOT nhất');
         }else {
           this.title.setTitle('ClipVNet - kênh video giải trí');

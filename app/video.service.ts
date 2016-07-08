@@ -1,11 +1,13 @@
 import { Injectable } from '@angular/core';
-import { Http, Response } from '@angular/http';
+import { Http, Response, Headers, RequestOptions } from '@angular/http';
 import { Observable }     from 'rxjs/Observable';
 // import 'rxjs/add/operator/map';
 import 'rxjs/Rx'; 
 
+import { UserService } from './user.service';
+
 export class VideoCard {
-  id: string;
+  _id: string;
   link: string;
   title: string;
   utitle: string;
@@ -20,7 +22,7 @@ export class VideoCard {
 }
 
 export class VideoDetails {
-  id: string;
+  _id: string;
   link: string;
   title: string;
   utitle: string;
@@ -36,15 +38,15 @@ export class VideoDetails {
 
 @Injectable()
 export class VideoService {
-	constructor(private http: Http){
+	constructor(private http: Http, private userService: UserService){
 
 	}
 
   fromNowOn(v:any){
     if(!v) return v;
-    var now = new Date();
-    for(var i in v){
-      var t0 = (now.getTime() - new Date(v[i].updateat).getTime());
+    var now = new Date();    
+    let handleVideo = (v: any) => {
+      var t0 = (now.getTime() - new Date(v.updateat).getTime());
       var str = '';
       var t = Math.floor(t0/1000/60/60/24);
       if(t > 0) str = t + ' ngày';
@@ -60,9 +62,16 @@ export class VideoService {
           }
         }
       }      
-      v[i].nowOnTime = str + ' trước';
+      v.nowOnTime = str + ' trước';
+      return v;
+    };
+    if(v instanceof Array){
+      for(var i in v){
+        v[i] = handleVideo(v[i]);
+      }
+    }else{
+      v = handleVideo(v);
     }
-    
     return v;
   }
 
@@ -102,8 +111,14 @@ export class VideoService {
           .catch(this.handleError);
   }
 
-	getRelateVideos(id: string, meta: any): Observable<VideoCard[]> {
-		return this.http.get('http://localhost:8000/video/relate?id=' + id + '&page=' + meta.page + "&rows=" + meta.rows)
+	getRelateVideos(id: string, keywords: Array<any>, updateat: string, meta: any): Observable<VideoCard[]> {
+    var s = '';
+    for(var i in keywords){
+      var k = keywords[i];
+      if(s.length > 0) s += ',';
+      s += '' + k._id;
+    }
+		return this.http.get('http://localhost:8000/video/relate?id=' + id + '&keywords=' + s + '&updateat=' + updateat + '&page=' + meta.page + "&rows=" + meta.rows)
           .map((res) => { return this.fromNowOn(res.json()); } )
           .catch(this.handleError);
 	}	
@@ -113,6 +128,24 @@ export class VideoService {
           .map((res) => { return res.json(); } )
           .catch(this.handleError);
 	}
+
+  addVideo(v: any){
+     return this.http.post('http://localhost:8000/video', v, new RequestOptions({ headers: new Headers({ 'Content-Type': 'application/json' }) }))
+          .map((res) => { return res.json(); } )
+          .catch(this.handleError); 
+  }
+
+  removeVideo(id: any){
+     return this.http.delete('http://localhost:8000/video/' + id, new RequestOptions({ headers: new Headers({ 'me': this.userService.currentUser.email }) }))
+          .map((res) => { return res.json(); } )
+          .catch(this.handleError); 
+  }
+
+  getMyVideo(){
+    return this.http.get('http://localhost:8000/myvideo', new RequestOptions({ headers: new Headers({ 'me': this.userService.currentUser.email }) }))
+          .map((res) => { return res.json(); } )
+          .catch(this.handleError); 
+  }
   
   private handleError (error: any) {
     // In a real world app, we might use a remote logging infrastructure

@@ -1,4 +1,4 @@
-import {Component, OnInit, EventEmitter, Output, ElementRef, AfterViewInit, OnDestroy} from '@angular/core';
+import {Component, OnInit, Input, EventEmitter, Output, ElementRef, AfterViewInit, OnDestroy} from '@angular/core';
 import {ROUTER_DIRECTIVES, Router} from "@angular/router";
 import {EventService} from "./event.service";
 
@@ -57,27 +57,28 @@ export class FacebookLoginComponent implements OnInit, OnDestroy {
     var self: FacebookLoginComponent = this;
     FB.login((resp: any) => {
       this.getInfor(self, resp);
-    }, {scope: 'publish_actions'});
+    }, {scope: 'email, publish_actions, user_friends'});
   }
 
   ngOnInit() {
-    this.gsub = this.eventService.emitter.subscribe((data: any) => {
-      if(data.com === 'facebook'){
-        if(data.action === 'loaded') {             
-          this.loginCallback();
-        }
-      }
-    });
+    // this.gsub = this.eventService.emitter.subscribe((data: any) => {
+    //   console.log(data);
+    //   if(data.com === 'facebook'){
+    //     if(data.action === 'loaded') {             
+    //       this.loginCallback();
+    //     }
+    //   }
+    // });
+    this.loginCallback();
   }
 
-  ngOnDestroy(){
-    this.gsub.unsubscribe();
+  ngOnDestroy() {
+    // this.gsub.unsubscribe();
   }
 
   loginCallback(){    
     var self: FacebookLoginComponent = this;
     FB.getLoginStatus((resp: any) => {
-      console.log(resp);
       self.getInfor(self, resp);      
     });
   }
@@ -131,15 +132,28 @@ export class FacebookLikeComponent extends AbsFacebookComponent {
     directives: [ROUTER_DIRECTIVES]
 })
 export class FacebookShareComponent {
+  @Input() title: string;
+  @Input() caption: string;
+  @Input() picture: string;
+  @Input() description: string;
+
   share(event:any){
+    let link = location.href;
     FB.ui({
-      method: 'share_open_graph',
-      action_type: 'og.likes',
-      action_properties: JSON.stringify({
-        object: location.href,
-      })
-    }, function(res: any){
-      
+      method: 'share',
+      mobile_iframe: true,
+      href: link,
+      title: this.title,
+      picture: this.picture,
+      caption: this.caption,
+      description: this.description
+    },
+    (res: any) => {
+      if (res && !res.error_message) {
+        alert('Posting completed.');
+      } else {
+        alert('Error while posting.' + link);
+      }
     });
   }
 }

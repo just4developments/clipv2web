@@ -18,8 +18,7 @@ declare const FB:any;
     selector: 'user-menu',
     template: `
       <li class="mdl-menu__item">{{user.name}}</li>
-      <li class="mdl-menu__item">Post</li>
-      <li disabled class="mdl-menu__item">Messages</li>
+      <li class="mdl-menu__item" (click)="goto('my-video')">Post</li>
       <li class="mdl-menu__item" (click)="logout()">Logout</li>
     `,
     directives: [ROUTER_DIRECTIVES]
@@ -28,12 +27,16 @@ export class UserMenuComponent implements AfterViewInit {
   @Input()
   user: any;
 
-  constructor(private eventService:EventService){
+  constructor(private eventService:EventService, private router: Router){
 
   }
 
   ngAfterViewInit() {      
     componentHandler.upgradeDom();
+  }
+
+  goto(path: string){
+    this.router.navigateByUrl(path);
   }
 
   logout(){
@@ -42,3 +45,8 @@ export class UserMenuComponent implements AfterViewInit {
     });
   }
 }
+
+
+
+
+

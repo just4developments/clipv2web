@@ -5,15 +5,18 @@ import { VideoDetailsPageComponent } from './video-details-page.component';
 import { VideoPageComponent } from './video-page.component';
 import { FacebookLoginComponent } from './facebook.component';
 import { UserMenuComponent } from './user.component';
-import { MainScrollDirective, MDL, GoTop } from './video.directive';
+import { MainScrollDirective, MDL, GoTop, EnterDirective, SelectWhenFocusDirective } from './video.directive';
 import { EventService } from './event.service';
+import { UserService } from './user.service';
 import { VideoService } from './video.service';
+import { SnackBarComponent } from './snack-bar.component';
 
 declare var componentHandler: any;
 
 @Component({
     selector: 'my-app',
     template: `
+      <snack-bar></snack-bar>
       <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header" mdl>
         <div class="android-header mdl-layout__header mdl-layout__header--waterfall">
           <div class="mdl-layout__header-row">
@@ -30,7 +33,10 @@ declare var componentHandler: any;
                 Tìm kiếm video
               </div>
               <div class="mdl-textfield__expandable-holder">
-                <input class="mdl-textfield__input" type="text" id="search-field" [(ngModel)]="txtSearch" (keypress)="search($event)">
+                <input class="mdl-textfield__input" type="text" id="search-field" [(ngModel)]="txtSearch" (enter)="search()" select-when-focus>
+                <div class="mdl-tooltip" for="search-field">
+                  Press enter to search
+                </div>
               </div>              
             </div>
             <!-- Navigation -->
@@ -44,12 +50,12 @@ declare var componentHandler: any;
             <a class="android-mobile-title mdl-layout-title" [routerLink]="['/']">
               ClipVNet<small>.com</small>
             </a>
-            <facebook-login *ngIf="!user" class="android-more-button"></facebook-login>
-            <a id="inbox-button" class="android-more-button mdl-js-ripple-effect" href="javascript: void(0)" *ngIf="user">
-              <span class="mdl-badge" data-badge="4">{{user.name}}</span>
+            <facebook-login *ngIf="!userService.currentUser" class="android-more-button"></facebook-login>
+            <a id="inbox-button" class="android-more-button mdl-js-ripple-effect" href="javascript: void(0)" *ngIf="userService.currentUser">
+              <span class="mdl-badge" data-badge="4">{{userService.currentUser.name}}</span>
             </a>
-            <ul class="mdl-menu mdl-js-menu mdl-menu--bottom-right mdl-js-ripple-effect" for="inbox-button" *ngIf="user">
-              <user-menu [user]="user"></user-menu>
+            <ul class="mdl-menu mdl-js-menu mdl-menu--bottom-right mdl-js-ripple-effect" for="inbox-button" *ngIf="userService.currentUser">
+              <user-menu [user]="userService.currentUser"></user-menu>
             </ul>
           </div>
         </div>
@@ -78,15 +84,14 @@ declare var componentHandler: any;
       </div>
     `,
     providers: [VideoService],
-    directives: [UserMenuComponent, MainScrollDirective, MDL, GoTop, ROUTER_DIRECTIVES, FacebookLoginComponent]
+    directives: [UserMenuComponent, MainScrollDirective, MDL, GoTop, ROUTER_DIRECTIVES, FacebookLoginComponent, SnackBarComponent, EnterDirective, SelectWhenFocusDirective]
 })
 export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
-  user: any;
   txtSearch: string;
   keywords: Array<any>;
   gsub: any;
 
-	constructor(private zone: NgZone, private videoService: VideoService, private eventService: EventService, private router: Router){
+	constructor(private zone: NgZone, private videoService: VideoService, private eventService: EventService, private router: Router, private userService: UserService){
 		this.videoService.getKeywords().subscribe(
                  keywords => { this.keywords = keywords; },
                  error =>  console.error(error));
@@ -98,14 +103,14 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
         if(data.action === 'login'){
           if(data.data){
             this.zone.run(()=>{
-              this.user = data.data;
+              this.userService.login(data.data);
             });
           }else{
             console.log('login failed');
           }
         }else if(data.action === 'logout'){
           this.zone.run(()=>{
-            this.user = undefined;
+            this.userService.logout();
           });
         }        
       }
@@ -124,16 +129,8 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
     componentHandler.upgradeDom();
   }
 
-  login(user: any){   
-    setTimeout(() => {
-      
-    }); 
-  }
-
-  search(event: any){    
-    if(event.keyCode === 13){
-      this.router.navigateByUrl('search/' + this.txtSearch);
-    }
+  search(){    
+    this.router.navigateByUrl('search/' + this.txtSearch);
   }
 }
 

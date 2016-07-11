@@ -51,7 +51,7 @@ declare var componentHandler: any;
               ClipVNet<small>.com</small>
             </a>
             <facebook-login *ngIf="!userService.currentUser" class="android-more-button"></facebook-login>
-            <a id="inbox-button" class="android-more-button mdl-js-ripple-effect" href="javascript: void(0)" *ngIf="userService.currentUser">
+            <a id="inbox-button" class="android-more-button" href="javascript: void(0)" *ngIf="userService.currentUser">
               <span class="mdl-badge" data-badge="4">{{userService.currentUser.name}}</span>
             </a>
             <ul class="mdl-menu mdl-js-menu mdl-menu--bottom-right mdl-js-ripple-effect" for="inbox-button" *ngIf="userService.currentUser">
@@ -103,7 +103,7 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
         if(data.action === 'login'){
           if(data.data){
             this.zone.run(()=>{
-              this.userService.login(data.data);
+              this.userService.currentUser = data.data;
             });
           }else{
             console.log('login failed');

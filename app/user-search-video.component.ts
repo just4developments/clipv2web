@@ -76,7 +76,7 @@ export class UserSearchVideoComponent implements AfterViewInit {
         }else{
           this.item.link = this.link;
         }
-        this.item.creator = this.userService.currentUser.email;
+        this.item.creator = this.userService.currentUser._id;
         this.url = this.sanitizer.bypassSecurityTrustResourceUrl(this.item.link);
       }catch(e){
         this.item.link = undefined;

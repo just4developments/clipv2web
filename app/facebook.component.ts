@@ -1,6 +1,7 @@
 import {Component, OnInit, Input, EventEmitter, Output, ElementRef, AfterViewInit, OnDestroy, OnChanges, SimpleChange, Renderer} from '@angular/core';
 import {ROUTER_DIRECTIVES, Router} from "@angular/router";
 import {EventService} from "./event.service";
+import {UserService} from "./user.service";
 
 declare var FB:any;
 declare var document: any;
@@ -52,7 +53,7 @@ class AbsFacebookComponent implements OnInit, OnDestroy {
 export class FacebookLoginComponent implements OnInit, OnDestroy {
   gsub:any;
 
-  constructor(private eventService: EventService) {    
+  constructor(private userService: UserService, private eventService: EventService) {    
     
   }
 
@@ -79,22 +80,29 @@ export class FacebookLoginComponent implements OnInit, OnDestroy {
     // this.gsub.unsubscribe();
   }
 
-  loginCallback(){    
+  loginCallback() {
     var self: FacebookLoginComponent = this;
     FB.getLoginStatus((resp: any) => {
       self.getInfor(self, resp);      
     });
   }
 
-  getInfor(self: FacebookLoginComponent, resp: any){
-    if(resp.status === 'connected'){      
+  getInfor(self: FacebookLoginComponent, resp: any){  
+    if(resp.status === 'connected'){
       FB.api('/me', {
         fields: ['email','name','age_range']
-      }, function(res: any) {
+      }, function(res: any) {       
         if (!res || res.error) {
           self.eventService.emit({com: 'facebook', action: 'login'});
         } else {
-          self.eventService.emit({com: 'facebook', action: 'login', data: res});
+          res.accessToken = resp.authResponse.accessToken;
+          self.userService.loginSystem(res).subscribe(
+            (user: any) =>{
+              self.eventService.emit({com: 'facebook', action: 'login', data: user});
+            },
+            (error: any) => {
+              self.eventService.emit({com: 'facebook', action: 'login'});
+            });          
         }
       });
     }else{

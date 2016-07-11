@@ -136,13 +136,13 @@ export class VideoService {
   }
 
   removeVideo(id: any){
-     return this.http.delete('http://localhost:8000/video/' + id, new RequestOptions({ headers: new Headers({ 'me': this.userService.currentUser.email }) }))
+     return this.http.delete('http://localhost:8000/video/' + id, new RequestOptions({ headers: new Headers({ 'me': this.userService.currentUser._id }) }))
           .map((res) => { return res.json(); } )
           .catch(this.handleError); 
   }
 
   getMyVideo(){
-    return this.http.get('http://localhost:8000/myvideo', new RequestOptions({ headers: new Headers({ 'me': this.userService.currentUser.email }) }))
+    return this.http.get('http://localhost:8000/myvideo', new RequestOptions({ headers: new Headers({ 'me': this.userService.currentUser._id }) }))
           .map((res) => { return res.json(); } )
           .catch(this.handleError); 
   }

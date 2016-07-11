@@ -34,10 +34,11 @@ export class MainScrollDirective implements OnInit, OnDestroy {
   }
  
   @HostListener('scroll', ['$event']) 
-  onScroll(event: any) {
+  onScroll(event: any) {    
     if(!this.isLoadedData) return false;    
   	var e = event.target;
-  	if(e.scrollTop + e.offsetHeight >= e.scrollHeight){
+    var m = e.querySelector('#mainContent0');
+  	if(e.scrollTop + e.offsetHeight >=   m.offsetHeight){
       this.isLoadedData = false;
       this.eventService.emit({com: 'video-card-list', action: 'append'});      
   	}

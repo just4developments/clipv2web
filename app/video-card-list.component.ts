@@ -12,7 +12,7 @@ declare var componentHandler: any;
 @Component({
     selector: 'video-card-list',
     template: `
-      <div class="android-card-container mdl-grid">
+      <div class="android-card-container mdl-grid" id="mainContent0">
           <div #viewContainer></div>
           <video-card-loading [hidden]="!isLoading"></video-card-loading>
       </div>      

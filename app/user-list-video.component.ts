@@ -1,8 +1,9 @@
-import { Component, Input, OnInit, OnDestroy, OnChanges, SimpleChange, ElementRef, EventEmitter, Output, HostListener, ComponentResolver, ViewContainerRef, ComponentFactory, ViewChild, ComponentRef, AfterViewInit, HostBinding } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy, NgZone, OnChanges, SimpleChange, ElementRef, EventEmitter, Output, HostListener, ComponentResolver, ViewContainerRef, ComponentFactory, ViewChild, ComponentRef, AfterViewInit, HostBinding } from '@angular/core';
 import { ROUTER_DIRECTIVES } from '@angular/router';
 
 import { VideoCard, VideoService } from './video.service';
 import { EventService } from './event.service';
+import { UserService } from './user.service';
 import { GoTop } from './video.directive';
 
 @Component({
@@ -31,19 +32,39 @@ import { GoTop } from './video.directive';
     `,
     directives: [ROUTER_DIRECTIVES, GoTop]
 })
-export class UserListVideoComponent implements OnInit, AfterViewInit {
+export class UserListVideoComponent implements OnInit, AfterViewInit, OnDestroy {
   videos: Array<VideoCard>;
+  isLoaded: boolean= false;
+  gsub: any;
 
-  constructor(private videoService: VideoService, private eventService: EventService){
+  constructor(private zone: NgZone, private videoService: VideoService, private eventService: EventService, private userService: UserService){
     
   }
 
   ngOnInit(){
-    setTimeout(() => {
-      this.videoService.getMyVideo().subscribe(
+    this.gsub = this.eventService.emitter.subscribe((data: any) => {
+      if(data.com === 'facebook'){
+        if(data.action === 'login'){
+          if(data.data){
+            this.zone.run(()=>{
+              this.loadMyVideo();
+            });
+          }
+        }     
+      }
+    });
+    this.loadMyVideo();
+  }
+
+  loadMyVideo(){
+    if(!this.userService.currentUser) return;
+    this.videoService.getMyVideo().subscribe(
                  videos => { this.videos = videos; },
-                 error =>  console.error(error));
-    }, 2000);    
+                 error =>  console.error(error));     
+  }
+
+  ngOnDestroy(){
+    this.gsub.unsubscribe();
   }
 
   ngAfterViewInit() {      

@@ -3,6 +3,9 @@ import { Http, Response, Headers, RequestOptions } from '@angular/http';
 import { Observable }     from 'rxjs/Observable';
 import 'rxjs/Rx'; 
 
+import { Config } from './config';
+
+
 @Injectable()
 export class UserService {
 	public currentUser: any;
@@ -16,7 +19,7 @@ export class UserService {
 	}
 
   loginSystem(user: any): Observable<any>{
-  	return this.http.post('http://localhost:8000/login', {token: user.accessToken}, new RequestOptions({ headers: new Headers({ 'Content-Type': 'application/json' }) }))
+  	return this.http.post(Config.HOST + '/login', {token: user.accessToken}, new RequestOptions({ headers: new Headers({ 'Content-Type': 'application/json' }) }))
       .map((res) => { return res.json(); } )
       .catch(this.handleError)    
   }

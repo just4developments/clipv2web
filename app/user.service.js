@@ -12,6 +12,7 @@ var core_1 = require('@angular/core');
 var http_1 = require('@angular/http');
 var Observable_1 = require('rxjs/Observable');
 require('rxjs/Rx');
+var config_1 = require('./config');
 var UserService = (function () {
     function UserService(http) {
         this.http = http;
@@ -20,7 +21,7 @@ var UserService = (function () {
         this.currentUser = user;
     };
     UserService.prototype.loginSystem = function (user) {
-        return this.http.post('http://localhost:8000/login', { token: user.accessToken }, new http_1.RequestOptions({ headers: new http_1.Headers({ 'Content-Type': 'application/json' }) }))
+        return this.http.post(config_1.Config.HOST + '/login', { token: user.accessToken }, new http_1.RequestOptions({ headers: new http_1.Headers({ 'Content-Type': 'application/json' }) }))
             .map(function (res) { return res.json(); })
             .catch(this.handleError);
     };

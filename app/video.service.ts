@@ -4,6 +4,8 @@ import { Observable }     from 'rxjs/Observable';
 // import 'rxjs/add/operator/map';
 import 'rxjs/Rx'; 
 
+import { Config } from './config';
+
 import { UserService } from './user.service';
 
 export class VideoCard {
@@ -76,37 +78,37 @@ export class VideoService {
   }
 
   searchVideos(txtSearch: string, meta:any): Observable<VideoCard[]> {
-    return this.http.get('http://localhost:8000/video/search?txtSearch=' + txtSearch + '&page=' + meta.page + "&rows=" + meta.rows)
+    return this.http.get(Config.HOST + '/video/search?txtSearch=' + txtSearch + '&page=' + meta.page + "&rows=" + meta.rows)
           .map((res) => { return this.fromNowOn(res.json()); } )
           .catch(this.handleError);
   }
 
   getKeywords(){
-    return this.http.get('http://localhost:8000/keywords')
+    return this.http.get(Config.HOST + '/keywords')
           .map((res) => { return res.json(); } )
           .catch(this.handleError);
   }
 
   getKeywordVideos(keyword: string, meta:any): Observable<VideoCard[]> {
-    return this.http.get('http://localhost:8000/video/keyword?keyword=' + keyword + '&page=' + meta.page + "&rows=" + meta.rows)
+    return this.http.get(Config.HOST + '/video/keyword?keyword=' + keyword + '&page=' + meta.page + "&rows=" + meta.rows)
           .map((res) => { return res.json(); } )
           .catch(this.handleError);
   }
 
 	getNewestVideos(meta:any): Observable<VideoCard[]> {
-		return this.http.get('http://localhost:8000/video/newest?page=' + meta.page + "&rows=" + meta.rows)
+		return this.http.get(Config.HOST + '/video/newest?page=' + meta.page + "&rows=" + meta.rows)
           .map((res) => { return this.fromNowOn(res.json()); } )
           .catch(this.handleError);
 	}
 
 	getMostVideos(meta:any): Observable<VideoCard[]> {
-		return this.http.get('http://localhost:8000/video/most?page=' + meta.page + "&rows=" + meta.rows)
+		return this.http.get(Config.HOST + '/video/most?page=' + meta.page + "&rows=" + meta.rows)
           .map((res) => { return this.fromNowOn(res.json()); } )
           .catch(this.handleError);
 	}
 
   getHotVideos(meta:any): Observable<VideoCard[]> {
-    return this.http.get('http://localhost:8000/video/hot?page=' + meta.page + "&rows=" + meta.rows)
+    return this.http.get(Config.HOST + '/video/hot?page=' + meta.page + "&rows=" + meta.rows)
           .map((res) => { return this.fromNowOn(res.json()); } )
           .catch(this.handleError);
   }
@@ -118,31 +120,31 @@ export class VideoService {
       if(s.length > 0) s += ',';
       s += '' + k._id;
     }
-		return this.http.get('http://localhost:8000/video/relate?id=' + id + '&keywords=' + s + '&updateat=' + updateat + '&page=' + meta.page + "&rows=" + meta.rows)
+		return this.http.get(Config.HOST + '/video/relate?id=' + id + '&keywords=' + s + '&updateat=' + updateat + '&page=' + meta.page + "&rows=" + meta.rows)
           .map((res) => { return this.fromNowOn(res.json()); } )
           .catch(this.handleError);
 	}	
 
 	getVideo(id: string): Observable<VideoDetails>{
-		return this.http.get('http://localhost:8000/video/'+id)
+		return this.http.get(Config.HOST + '/video/'+id)
           .map((res) => { return res.json(); } )
           .catch(this.handleError);
 	}
 
   addVideo(v: any){
-     return this.http.post('http://localhost:8000/video', v, new RequestOptions({ headers: new Headers({ 'Content-Type': 'application/json' }) }))
+     return this.http.post(Config.HOST + '/video', v, new RequestOptions({ headers: new Headers({ 'Content-Type': 'application/json' }) }))
           .map((res) => { return res.json(); } )
           .catch(this.handleError); 
   }
 
   removeVideo(id: any){
-     return this.http.delete('http://localhost:8000/video/' + id, new RequestOptions({ headers: new Headers({ 'me': this.userService.currentUser._id }) }))
+     return this.http.delete(Config.HOST + '/video/' + id, new RequestOptions({ headers: new Headers({ 'me': this.userService.currentUser._id }) }))
           .map((res) => { return res.json(); } )
           .catch(this.handleError); 
   }
 
   getMyVideo(){
-    return this.http.get('http://localhost:8000/myvideo', new RequestOptions({ headers: new Headers({ 'me': this.userService.currentUser._id }) }))
+    return this.http.get(Config.HOST + '/myvideo', new RequestOptions({ headers: new Headers({ 'me': this.userService.currentUser._id }) }))
           .map((res) => { return res.json(); } )
           .catch(this.handleError); 
   }

@@ -13,6 +13,7 @@ var http_1 = require('@angular/http');
 var Observable_1 = require('rxjs/Observable');
 // import 'rxjs/add/operator/map';
 require('rxjs/Rx');
+var config_1 = require('./config');
 var user_service_1 = require('./user.service');
 var VideoCard = (function () {
     function VideoCard() {
@@ -71,35 +72,35 @@ var VideoService = (function () {
     };
     VideoService.prototype.searchVideos = function (txtSearch, meta) {
         var _this = this;
-        return this.http.get('http://localhost:8000/video/search?txtSearch=' + txtSearch + '&page=' + meta.page + "&rows=" + meta.rows)
+        return this.http.get(config_1.Config.HOST + '/video/search?txtSearch=' + txtSearch + '&page=' + meta.page + "&rows=" + meta.rows)
             .map(function (res) { return _this.fromNowOn(res.json()); })
             .catch(this.handleError);
     };
     VideoService.prototype.getKeywords = function () {
-        return this.http.get('http://localhost:8000/keywords')
+        return this.http.get(config_1.Config.HOST + '/keywords')
             .map(function (res) { return res.json(); })
             .catch(this.handleError);
     };
     VideoService.prototype.getKeywordVideos = function (keyword, meta) {
-        return this.http.get('http://localhost:8000/video/keyword?keyword=' + keyword + '&page=' + meta.page + "&rows=" + meta.rows)
+        return this.http.get(config_1.Config.HOST + '/video/keyword?keyword=' + keyword + '&page=' + meta.page + "&rows=" + meta.rows)
             .map(function (res) { return res.json(); })
             .catch(this.handleError);
     };
     VideoService.prototype.getNewestVideos = function (meta) {
         var _this = this;
-        return this.http.get('http://localhost:8000/video/newest?page=' + meta.page + "&rows=" + meta.rows)
+        return this.http.get(config_1.Config.HOST + '/video/newest?page=' + meta.page + "&rows=" + meta.rows)
             .map(function (res) { return _this.fromNowOn(res.json()); })
             .catch(this.handleError);
     };
     VideoService.prototype.getMostVideos = function (meta) {
         var _this = this;
-        return this.http.get('http://localhost:8000/video/most?page=' + meta.page + "&rows=" + meta.rows)
+        return this.http.get(config_1.Config.HOST + '/video/most?page=' + meta.page + "&rows=" + meta.rows)
             .map(function (res) { return _this.fromNowOn(res.json()); })
             .catch(this.handleError);
     };
     VideoService.prototype.getHotVideos = function (meta) {
         var _this = this;
-        return this.http.get('http://localhost:8000/video/hot?page=' + meta.page + "&rows=" + meta.rows)
+        return this.http.get(config_1.Config.HOST + '/video/hot?page=' + meta.page + "&rows=" + meta.rows)
             .map(function (res) { return _this.fromNowOn(res.json()); })
             .catch(this.handleError);
     };
@@ -112,27 +113,27 @@ var VideoService = (function () {
                 s += ',';
             s += '' + k._id;
         }
-        return this.http.get('http://localhost:8000/video/relate?id=' + id + '&keywords=' + s + '&updateat=' + updateat + '&page=' + meta.page + "&rows=" + meta.rows)
+        return this.http.get(config_1.Config.HOST + '/video/relate?id=' + id + '&keywords=' + s + '&updateat=' + updateat + '&page=' + meta.page + "&rows=" + meta.rows)
             .map(function (res) { return _this.fromNowOn(res.json()); })
             .catch(this.handleError);
     };
     VideoService.prototype.getVideo = function (id) {
-        return this.http.get('http://localhost:8000/video/' + id)
+        return this.http.get(config_1.Config.HOST + '/video/' + id)
             .map(function (res) { return res.json(); })
             .catch(this.handleError);
     };
     VideoService.prototype.addVideo = function (v) {
-        return this.http.post('http://localhost:8000/video', v, new http_1.RequestOptions({ headers: new http_1.Headers({ 'Content-Type': 'application/json' }) }))
+        return this.http.post(config_1.Config.HOST + '/video', v, new http_1.RequestOptions({ headers: new http_1.Headers({ 'Content-Type': 'application/json' }) }))
             .map(function (res) { return res.json(); })
             .catch(this.handleError);
     };
     VideoService.prototype.removeVideo = function (id) {
-        return this.http.delete('http://localhost:8000/video/' + id, new http_1.RequestOptions({ headers: new http_1.Headers({ 'me': this.userService.currentUser._id }) }))
+        return this.http.delete(config_1.Config.HOST + '/video/' + id, new http_1.RequestOptions({ headers: new http_1.Headers({ 'me': this.userService.currentUser._id }) }))
             .map(function (res) { return res.json(); })
             .catch(this.handleError);
     };
     VideoService.prototype.getMyVideo = function () {
-        return this.http.get('http://localhost:8000/myvideo', new http_1.RequestOptions({ headers: new http_1.Headers({ 'me': this.userService.currentUser._id }) }))
+        return this.http.get(config_1.Config.HOST + '/myvideo', new http_1.RequestOptions({ headers: new http_1.Headers({ 'me': this.userService.currentUser._id }) }))
             .map(function (res) { return res.json(); })
             .catch(this.handleError);
     };

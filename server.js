@@ -2,26 +2,26 @@ var express = require('express');
 var app = express();
 
 
-app.use(express.static(__dirname));
+app.use(express.static(__dirname + '/dist'));
 
 app.get('/', function(req, res){
-  res.sendFile(__dirname + '/index.html');
+  res.sendFile(__dirname + '/dist/index.html');
 });
 
 app.get('/v/:mode', function(req, res){
-  res.sendFile(__dirname + '/index.html');
+  res.sendFile(__dirname + '/dist/index.html');
 });
 
 app.get('/k/:keyword', function(req, res){
-  res.sendFile(__dirname + '/index.html');
+  res.sendFile(__dirname + '/dist/index.html');
 });
 
 app.get('/search/:txtSearch', function(req, res){
-  res.sendFile(__dirname + '/index.html');
+  res.sendFile(__dirname + '/dist/index.html');
 });
 
 app.get('/my-video', function(req, res){
-  res.sendFile(__dirname + '/index.html');
+  res.sendFile(__dirname + '/dist/index.html');
 });
 
 app.get('/:id', function(req, res){
@@ -39,7 +39,7 @@ app.get('/:id', function(req, res){
 	// 	  </head>
 	//  	</html>		
 	// `);
-  res.sendFile(__dirname + '/index.html');
+  res.sendFile(__dirname + '/dist/index.html');
 });
 
 app.listen(3000, function () {

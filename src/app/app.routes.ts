@@ -3,19 +3,29 @@ import { RouterConfig } from '@angular/router';
 import { NoContent } from './no-content';
 
 import { VideoDetailsPageComponent } from './video';
-import { VideoPageComponent } from './videos';
+import { VideoCardListComponent } from './videos';
+import { VideoService } from './video.service';
 
 import { UserVideoPageComponent } from './user';
 
-import { DataResolver } from './app.resolver';
+import { VideoResolver } from './app.resolver';
 
 export const routes: RouterConfig = [
-  { path: '', component: VideoPageComponent },
-  { path: 'v/:mode', component: VideoPageComponent },
-  { path: 'k/:keyword', component: VideoPageComponent },
-  { path: 'search/:txtSearch', component: VideoPageComponent },
-  { path: 'my-video', component: UserVideoPageComponent },
-  { path: ':id', component: VideoDetailsPageComponent }
+  { path: '', component: 'VideoPageComponent', 
+    canActivate: [ WebpackAsyncRoute ],
+    children: [
+      { path: '', component: 'VideoCardListComponent' },
+      { path: 'v/:mode', component: 'VideoCardListComponent' },
+      { path: 'k/:keyword', component: 'VideoCardListComponent' },
+      { path: 'search/:txtSearch', component: 'VideoCardListComponent' }
+    ] 
+  },    
+  { path: ':id', component: 'VideoDetailsPageComponent', 
+    resolve: {
+      video: VideoResolver
+    } 
+  },
+  { path: 'my-video', component: UserVideoPageComponent },  
 
   // { path: 'home',  component: Home },
   // // make sure you match the component type string to the require in asyncRoutes
@@ -29,7 +39,7 @@ export const routes: RouterConfig = [
   //   children: [
   //     { path: '', component: 'Index' }  // must be included
   //   ]},
-  // { path: '**',    component: NoContent },
+  { path: '**',    component: NoContent },
 ];
 
 // Async load a component using Webpack's require with es6-promise-loader and webpack `require`
@@ -38,8 +48,9 @@ export const routes: RouterConfig = [
 
 export const asyncRoutes: AsyncRoutes = {
   // we have to use the alternative syntax for es6-promise-loader to grab the routes
-  // 'About': require('es6-promise-loader!./about'),
-  // 'Detail': require('es6-promise-loader!./+detail'),
+  'VideoDetailsPageComponent': require('es6-promise-loader!./video'),
+  'VideoPageComponent': require('es6-promise-loader!./videos'),
+  'VideoCardListComponent': require('es6-promise-loader!./videos')
   // 'Index': require('es6-promise-loader!./+detail'), // must be exported with detail/index.ts
 };
 
@@ -47,8 +58,8 @@ export const asyncRoutes: AsyncRoutes = {
 // Optimizations for initial loads
 // An array of callbacks to be invoked after bootstrap to prefetch async routes
 export const prefetchRouteCallbacks: Array<IdleCallbacks> = [
-  // asyncRoutes['About'],
-  // asyncRoutes['Detail'],
+  asyncRoutes['VideoDetailsPageComponent'],
+  asyncRoutes['VideoPageComponent'],
    // es6-promise-loader returns a function
 ];
 

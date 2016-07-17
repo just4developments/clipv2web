@@ -1,5 +1,5 @@
 import { Component, Input, OnInit, OnChanges, SimpleChange } from '@angular/core';
-import { ROUTER_DIRECTIVES} from '@angular/router';
+import { ROUTER_DIRECTIVES } from '@angular/router';
 import { SafeResourceUrl, DomSanitizationService } from '@angular/platform-browser';
 import { Title } from '@angular/platform-browser';
 

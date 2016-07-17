@@ -18,14 +18,14 @@ import { HowlongPipe } from '../filter.pipe';
       </div>
       <div class="howlong" *ngIf="item.duration"><i class="material-icons dp48">alarm</i>{{item.duration | HowlongPipe}}</div>
       <div class="mdl-card__supporting-text icon-des mdl-grid des-color">
-        <div class="mdl-cell mdl-cell--6-col mdl-cell--4-col-tablet mdl-cell--4-col-phone ellipsis-1" title="{{item.creator}}"><i class="material-icons dp48">tag_faces</i> {{item.creator}}</div>
-        <div class="mdl-cell mdl-cell--6-col mdl-cell--4-col-tablet mdl-cell--4-col-phone ellipsis-1" title="{{item.nowOnTime}}"><i class="material-icons dp48">alarm_on</i> {{item.nowOnTime}}</div>
+        <div class="mdl-cell mdl-cell--6-col mdl-cell--4-col-tablet mdl-cell--2-col-phone ellipsis-1" title="{{item.creator}}"><i class="material-icons dp48">tag_faces</i> {{item.creator}}</div>
+        <div class="mdl-cell mdl-cell--6-col mdl-cell--4-col-tablet mdl-cell--2-col-phone ellipsis-1" title="{{item.nowOnTime}}"><i class="material-icons dp48">alarm_on</i> {{item.nowOnTime}}</div>
       </div>
     </a>
     `,
     host: {
       '[class.mdl-card]': 'true',
-      '[class.mdl-shadow--3dp]': 'true',
+      '[class.mdl-shadow--2dp]': 'true',
       '[class.mdl-cell]': 'true',
       '[class.mdl-cell--4-col]': 'true',
       '[class.mdl-cell--4-col-tablet]': 'true',

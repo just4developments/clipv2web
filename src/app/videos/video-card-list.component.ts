@@ -1,5 +1,6 @@
 import { Component, Input, OnInit, OnDestroy, OnChanges, SimpleChange, ComponentResolver, ViewContainerRef, ComponentFactory, ViewChild, ComponentRef, AfterViewInit } from '@angular/core';
-import { ROUTER_DIRECTIVES } from '@angular/router';
+import { ActivatedRoute, Router, ROUTER_DIRECTIVES, RouteParams } from '@angular/router';
+import { Title } from '@angular/platform-browser';
 
 import { EventService } from '../event.service';
 import { VideoCard, VideoService } from '../video.service';
@@ -17,7 +18,7 @@ declare var componentHandler: any;
           <video-card-loading [hidden]="!isLoading"></video-card-loading>
       </div>      
       <div *ngIf="isLastAutoScroll" align="center" class="isLastAutoScroll">
-        <button class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored" go-top [routerLink]="['/']" [queryParams]="{page: page}">
+        <button class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored" go-top [routerLink]="['/v/'+mode]" [queryParams]="{page: page+1}">
           <i class="normal material-icons">hdr_weak</i>
           <i class="hover material-icons">hdr_strong</i>
         </button>
@@ -29,23 +30,25 @@ declare var componentHandler: any;
       'button:hover i.hover { display: block; }',
       'button:hover i.normal { display: none; }'
     ],
-    providers: [VideoService],
     directives: [VideoCardItemComponent, VideoCardLoadingComponent, ROUTER_DIRECTIVES, GoTop]
 })
 export class VideoCardListComponent implements OnInit, OnDestroy, OnChanges, AfterViewInit { 
     isLoading: boolean = false;
+    isInit: boolean = false;
+    sub: any;
+    qsub: any;
     gsub:any;
     isLastAutoScroll: boolean = false;
     initPage:number = 1;
-    @Input() mode: string;
-    @Input() query: any;
-    @Input() page: number;
-    @Input() rows: number;
+    mode: string;
+    query: any = {};
+    page: number = 1;
+    rows: number = 12;
 
     @ViewChild('viewContainer', {read: ViewContainerRef}) 
     viewContainer:any;
 
-    constructor(private videoService: VideoService, private eventService: EventService, private cmpResolver: ComponentResolver){
+    constructor(private router: Router, private route: ActivatedRoute, private title: Title, private videoService: VideoService, private eventService: EventService, private cmpResolver: ComponentResolver){
       
     }
 
@@ -54,10 +57,7 @@ export class VideoCardListComponent implements OnInit, OnDestroy, OnChanges, Aft
     }
 
     ngOnChanges(changes: {[propertyName: string]: SimpleChange}){ 
-      this.eventService.emit({com: 'video-card-list', action: 'start'});
-      this.initPage = this.page;
-      this.isLastAutoScroll = false;
-      this.clearContent(this);
+      
       this.nextPage(this, () => {
         this.eventService.emit({com: 'video-card-list', action: 'loaded'});
       });
@@ -67,7 +67,7 @@ export class VideoCardListComponent implements OnInit, OnDestroy, OnChanges, Aft
       this.gsub = this.eventService.emitter.subscribe((data: any) => {
         if(data.com === 'video-card-list'){
           if(data.action === 'append') {            
-            this.page++;            
+            this.page++;
             this.nextPage(this, () => {
               this.eventService.emit({com: 'video-card-list', action: 'loaded'});
               if(this.page > this.initPage && (this.page - this.initPage) % 2 === 0){
@@ -78,10 +78,54 @@ export class VideoCardListComponent implements OnInit, OnDestroy, OnChanges, Aft
           }
         }
       });
+      this.sub = this.route.params.subscribe((params: any) => {
+        var txtSearch: string = params['txtSearch'];      
+        var keyword: string =  params['keyword'];
+        if(txtSearch){
+          this.mode = 'search';
+          this.query.txtSearch = txtSearch;
+          this.title.setTitle(txtSearch + '***');
+        }else if(keyword){
+          this.mode = 'keyword';
+          this.query.keyword = keyword;
+          this.title.setTitle(keyword);
+        }else {
+          this.mode = params['mode'] || 'newest';
+          if(this.mode === 'most'){
+            this.title.setTitle('Xem nhiều nhất');
+          }else if(this.mode === 'hot'){
+            this.title.setTitle('Clip HOT nhất');
+          }else {
+            this.title.setTitle('ClipVNet - kênh video giải trí');
+          }
+        }
+        this.init();
+      });
+      this.qsub = this.router.routerState.queryParams.subscribe((params:any) => {
+        this.initPage = +params.page || 1;
+        this.page = this.initPage;
+        this.isLastAutoScroll = false;
+        this.init();
+      });
+    }
+
+    init() {
+      if(this.isInit) return;      
+      this.isInit = true;
+      setTimeout(() => {
+        this.clearContent(this);
+        this.eventService.emit({com: 'video-card-list', action: 'start'});
+        this.nextPage(this, () => {
+          this.isInit = false;
+          this.eventService.emit({com: 'video-card-list', action: 'loaded'});
+        });
+      }, 100);
     }
 
     ngOnDestroy(){
       this.gsub.unsubscribe();
+      this.qsub.unsubscribe();
+      this.sub.unsubscribe();
     }
 
     nextPage(self:VideoCardListComponent, fcDone: any){
@@ -121,7 +165,7 @@ export class VideoCardListComponent implements OnInit, OnDestroy, OnChanges, Aft
     drawContent(self: VideoCardListComponent, videos: Array<VideoCard>, fcDone: any){            
       if(videos.length === 0) {
         this.isLoading = undefined;
-        return;
+        return fcDone();
       }
       self.cmpResolver.resolveComponent(VideoCardItemComponent)
       .then((factory:ComponentFactory<VideoCardItemComponent>) => {

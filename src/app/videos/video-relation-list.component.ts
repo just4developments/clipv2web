@@ -17,7 +17,6 @@ import { VideoRelationItemComponent } from './video-relation-item.component';
         </ul>
       </div>
     `,
-    providers: [VideoService],
     directives: [VideoRelationItemComponent]
 })
 export class VideoRelationListComponent implements OnInit, OnChanges { 

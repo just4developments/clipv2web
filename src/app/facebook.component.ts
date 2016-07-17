@@ -131,7 +131,7 @@ export class FacebookPageComponent extends AbsFacebookComponent {
 
 @Component({
     selector: 'facebook-like',
-    template: '<div class="fb-like" data-href="' + FANPAGE + '" data-layout="button_count" data-action="like" data-size="small" data-show-faces="false" data-share="false"></div>',
+    template: '<div class="fb-like" data-href="' + FANPAGE + '" data-layout="standard" data-action="like" data-size="small" data-show-faces="true" data-share="false"></div>',
     directives: [ROUTER_DIRECTIVES]
 })
 export class FacebookLikeComponent extends AbsFacebookComponent {

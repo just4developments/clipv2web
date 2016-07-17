@@ -2,17 +2,25 @@ import { Input, OnInit, OnDestroy, Directive, Output, EventEmitter, ElementRef, 
 
 import { EventService } from './event.service';
 
+declare var window: any;
+
 ///////////////////////////////////////////////////////////////////
 
 @Directive({
   selector: '[scroll-bottom]'
 })
-export class MainScrollDirective implements OnInit, OnDestroy {
+export class MainScrollDirective implements OnInit, OnDestroy, AfterViewInit {
 
+  rightCol: any;
   isLoadedData: boolean;
   gsub: any;
+  m: any;
  
-  constructor(private eventService: EventService) {
+  constructor(private eventService: EventService, private e: ElementRef) {
+    
+  }
+
+  ngAfterViewInit() {
     
   }
 
@@ -35,10 +43,11 @@ export class MainScrollDirective implements OnInit, OnDestroy {
  
   @HostListener('scroll', ['$event']) 
   onScroll(event: any) {
-    if(!this.isLoadedData) return false;    
-  	var e = event.target;
-    var m = e.querySelector('#mainContent0');
-  	if(e.scrollTop + e.offsetHeight >=   m.offsetHeight){
+    if(!this.isLoadedData) return false;  
+    
+    var m:any = window.document.querySelector('#mainContent0');
+    if(!m) return this.isLoadedData = undefined;
+  	if(this.e.nativeElement.scrollTop + this.e.nativeElement.offsetHeight >= m.offsetHeight){
       this.isLoadedData = false;
       this.eventService.emit({com: 'video-card-list', action: 'append'});      
   	}
@@ -75,7 +84,6 @@ export class SelectWhenFocusDirective {
 
 
 ///////////////////////////////////////////////////////////////////
-declare var window: any;
 
 @Directive({
     selector: '[go-top]'
@@ -98,6 +106,27 @@ export class GoTop implements AfterViewInit {
         this.container.scrollTop = 0;
       }, 200);    
     }
+  }
+}
+
+@Directive({
+    selector: '[nav-left]'
+})    
+export class NavLeft implements AfterViewInit {
+  container: any;
+
+  constructor(private e: ElementRef){
+    
+  }
+
+  ngAfterViewInit() {
+    
+  }
+
+  @HostListener('click', ['$event']) 
+  onClick(event: any){
+    window.document.querySelector('.mdl-layout__obfuscator').classList.remove('is-visible');
+    this.e.nativeElement.classList.remove('is-visible');
   }
 }
 

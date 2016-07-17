@@ -1,9 +1,10 @@
 import { Component, AfterViewInit, NgZone, OnInit, OnDestroy } from '@angular/core';
 import { ROUTER_DIRECTIVES, Router } from '@angular/router';
+import { CORE_DIRECTIVES } from '@angular/common';
 
 import { FacebookLoginComponent } from './facebook.component';
 import { UserMenuComponent } from './user';
-import { MainScrollDirective, MDL, GoTop, EnterDirective, SelectWhenFocusDirective } from './video.directive';
+import { MainScrollDirective, MDL, GoTop, EnterDirective, SelectWhenFocusDirective, NavLeft } from './video.directive';
 import { EventService } from './event.service';
 import { UserService } from './user.service';
 import { VideoService } from './video.service';
@@ -57,6 +58,18 @@ declare var componentHandler: any;
             </ul>
           </div>
         </div>
+
+        <div class="android-drawer mdl-layout__drawer" *md nav-left>
+          <span class="mdl-layout-title" *ngIf="userService.currentUser">
+            {{userService.currentUser.name}}
+          </span>
+          <nav class="mdl-navigation">
+            <a class="mdl-navigation__link {{actived('/')}}" [routerLink]="['/']" go-top>Mới nhất</a>
+            <a class="mdl-navigation__link {{actived('/')}}" [routerLink]="['/v/most']" go-top>Xem nhiều nhất</a>
+            <a class="mdl-navigation__link {{actived('/v/hot')}}" [routerLink]="['/v/hot']" go-top>Hot nhất</a>
+          </nav>
+        </div>
+
         <div class="android-content mdl-layout__content" align="center" scroll-bottom>
           <div align="left" id="mainContent">
             <router-outlet></router-outlet>
@@ -81,8 +94,7 @@ declare var componentHandler: any;
         </div>  
       </div>
     `,
-    providers: [VideoService],
-    directives: [UserMenuComponent, MainScrollDirective, MDL, GoTop, ROUTER_DIRECTIVES, FacebookLoginComponent, SnackBarComponent, EnterDirective, SelectWhenFocusDirective]
+    directives: [UserMenuComponent, MainScrollDirective, MDL, GoTop, NavLeft, ROUTER_DIRECTIVES, FacebookLoginComponent, SnackBarComponent, EnterDirective, SelectWhenFocusDirective, CORE_DIRECTIVES]
 })
 export class App implements AfterViewInit, OnInit, OnDestroy {
   txtSearch: string;
@@ -128,7 +140,7 @@ export class App implements AfterViewInit, OnInit, OnDestroy {
   }
 
   search(){    
-    this.router.navigateByUrl('search/' + this.txtSearch);
+    this.router.navigateByUrl('search/' + this.txtSearch + '?t=' + new Date().getTime());
   }
 }
 

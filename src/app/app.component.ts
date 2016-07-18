@@ -119,6 +119,7 @@ export class App implements AfterViewInit, OnInit, OnDestroy {
         }else if(data.action === 'logout'){
           this.zone.run(()=>{
             this.userService.logout();
+            this.router.navigateByUrl('');
           });
         }        
       }

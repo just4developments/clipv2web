@@ -11,11 +11,11 @@ import { GoTop } from '../video.directive';
     template: `
       <div class="mdl-card mdl-shadow--2dp">
         <div class="mdl-card__title mdl-card--border">
-          <h6 class="mdl-card__title-text">My videos</h6>
+          <h6 class="mdl-card__title-text">Video của tôi</h6>
           <div class="mdl-layout-spacer"></div>
           <i class="material-icons mdl-list__item-icon">videocam</i>
         </div>
-        <ul class="mdl-list" *ngIf="videos">
+        <ul class="mdl-list" *ngIf="videos && videos.length > 0">
           <li class="mdl-list__item mdl-list__item--three-line" style="width: 100%" *ngFor="let item of videos">
             <a class="mdl-list__item-primary-content nothing" [routerLink]="['/'+item._id]" go-top>
               <img src="{{item.image}}" *ngIf="!item.youtubeid" width="80" style="float: left; margin-right: 5px;" class="rounded">
@@ -26,10 +26,14 @@ import { GoTop } from '../video.directive';
               </span>
             </a>
             <a class="mdl-list__item-secondary-action" href="javascript:void(0)" (click)="remove(item)" *ngIf="!item.status"><i class="material-icons">remove_circle</i></a>
-          </li>
+          </li>          
         </ul>
+        <div class="mdl-card__supporting-text" *ngIf="!videos || videos.length === 0">
+          Không tìm thấy video nào
+        </div>
       </div>
     `,
+    styles: ['.mdl-card {min-height: 0px}'],
     directives: [ROUTER_DIRECTIVES, GoTop]
 })
 export class UserListVideoComponent implements OnInit, AfterViewInit, OnDestroy {

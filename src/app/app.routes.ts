@@ -11,6 +11,7 @@ import { UserVideoPageComponent } from './user';
 import { VideoResolver } from './app.resolver';
 
 export const routes: RouterConfig = [
+  { path: 'my-video', component: UserVideoPageComponent },
   { path: '', component: 'VideoPageComponent', 
     canActivate: [ WebpackAsyncRoute ],
     children: [
@@ -24,21 +25,7 @@ export const routes: RouterConfig = [
     resolve: {
       video: VideoResolver
     } 
-  },
-  { path: 'my-video', component: UserVideoPageComponent },  
-
-  // { path: 'home',  component: Home },
-  // // make sure you match the component type string to the require in asyncRoutes
-  // { path: 'about', component: 'About',
-  //   resolve: {
-  //     'yourData': DataResolver
-  //   }},
-  // // async components with children routes must use WebpackAsyncRoute
-  // { path: 'detail', component: 'Detail',
-  //   canActivate: [ WebpackAsyncRoute ],
-  //   children: [
-  //     { path: '', component: 'Index' }  // must be included
-  //   ]},
+  },  
   { path: '**',    component: NoContent },
 ];
 

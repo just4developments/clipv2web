@@ -5,6 +5,7 @@ import 'rxjs/Rx';
 
 import { Config } from './config';
 
+declare var window: any;
 
 @Injectable()
 export class UserService {
@@ -24,8 +25,9 @@ export class UserService {
       .catch(this.handleError)    
   }
 
-  logout(){
+  logout(){    
     this.currentUser = undefined;
+    delete window.localStorage.user;
   }
 
 

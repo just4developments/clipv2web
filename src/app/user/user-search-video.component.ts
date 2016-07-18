@@ -12,13 +12,13 @@ declare var componentHandler: any;
 @Component({
     selector: 'user-search-video',
     template: `
-      <h3>Upload video của bạn cho chúng tôi</h3>
+      <h3>Chia sẻ video của bạn cho chúng tôi</h3>      
       <hr/>
-      <div class="mdl-textfield mdl-js-textfield mdl-textfield--expandable mdl-textfield--floating-label" style="width: 100%">
-        <label class="mdl-button mdl-js-button mdl-button--icon" for="link">
-          <i class="material-icons">search</i>
-        </label>
-        <div class="mdl-textfield__expandable-holder" style="width: 100%">
+      <p>1. Copy link youtube bạn muốn chia sẻ <b>https://www.youtube.com/watch?v=nugEDwNWZYw</b> và paste xuống phía dưới rồi nhấn enter để tìm kiếm</p>
+      <p>2. Hệ thống sẽ tự động lấy tiêu để của video trên youtube nếu bạn không nhập tiêu đề cho clip</p>
+
+      <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label" style="width: 100%">
+        <div class="" style="width: 100%">
           <input class="mdl-textfield__input" type="text" id="link" [(ngModel)]="link" (keypress)="find($event)" required select-when-focus>
           <label class="mdl-textfield__label" for="link">
             Youtube link
@@ -26,7 +26,6 @@ declare var componentHandler: any;
         </div>
       </div>
       <br /><br />
-      
       <div class="mdl-card mdl-cell--12-col" [hidden]="!item.link">
         <div class="mdl-card__title mdl-card--expand">                    
           <div class="mdl-textfield mdl-js-textfield mdl-card__title-text" style="width: 100%">
@@ -47,6 +46,7 @@ declare var componentHandler: any;
         </div>
       </div>      
     `,
+    styles: ['p {font-size: 90%; margin: 8px 0px; padding: 0px; line-height: 18px; color: #737373;}'],
     directives: [SelectWhenFocusDirective]
 })
 export class UserSearchVideoComponent implements AfterViewInit {
@@ -81,7 +81,6 @@ export class UserSearchVideoComponent implements AfterViewInit {
       }catch(e){
         this.item.link = undefined;
       }
-      console.log(this.item);
     }else{
       if(this.item.link && !this.link){
         this.item.link = undefined;

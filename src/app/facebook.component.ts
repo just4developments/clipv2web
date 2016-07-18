@@ -6,6 +6,7 @@ import {UserService} from "./user.service";
 declare var FB:any;
 declare var document: any;
 declare var location: any;
+declare var window: any;
 const FANPAGE:string = "https://www.facebook.com/clipvnet/";
 
 class AbsFacebookComponent implements OnInit, OnDestroy {
@@ -96,6 +97,9 @@ export class FacebookLoginComponent implements OnInit, OnDestroy {
 
   getInfor(self: FacebookLoginComponent, resp: any){  
     if(resp.status === 'connected'){
+      if(window.localStorage.user){
+        return self.eventService.emit({com: 'facebook', action: 'login', data: JSON.parse(window.localStorage.user)});
+      }
       FB.api('/me', {
         fields: ['email','name','age_range']
       }, function(res: any) {       
@@ -105,6 +109,7 @@ export class FacebookLoginComponent implements OnInit, OnDestroy {
           res.accessToken = resp.authResponse.accessToken;
           self.userService.loginSystem(res).subscribe(
             (user: any) =>{
+              window.localStorage.user = JSON.stringify(user);
               self.eventService.emit({com: 'facebook', action: 'login', data: user});
             },
             (error: any) => {

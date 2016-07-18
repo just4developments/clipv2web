@@ -45,14 +45,18 @@ class AbsFacebookComponent implements OnInit, OnDestroy {
 @Component({
     selector: 'facebook-login',
     template: `
-      <button class="mdl-button mdl-js-button mdl-button--colored" (click)="onFacebookLoginClick()">
+      <button class="mdl-button mdl-js-button mdl-button--colored" (click)="onFacebookLoginClick()" *ngIf="type === 0">
         Login
       </button>
+      <nav class="mdl-navigation" *ngIf="type === 1">
+        <a class="mdl-navigation__link" href="javascript:void(0);" (click)="onFacebookLoginClick()"><i class="material-icons">perm_identity</i> Login</a>
+      </nav>
     `,
     directives: [ROUTER_DIRECTIVES]
 })
 export class FacebookLoginComponent implements OnInit, OnDestroy {
   gsub:any;
+  @Input() type: number = 0;
 
   constructor(private userService: UserService, private eventService: EventService) {    
     
@@ -67,7 +71,7 @@ export class FacebookLoginComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     FB.init({ 
-      appId: '291510107860506',
+      appId: 'development' === ENV ? '850835344955953' : '291510107860506',
       status: true, 
       cookie: true, 
       xfbml: true,
@@ -109,6 +113,7 @@ export class FacebookLoginComponent implements OnInit, OnDestroy {
           res.accessToken = resp.authResponse.accessToken;
           self.userService.loginSystem(res).subscribe(
             (user: any) =>{
+              user.fbid = resp.authResponse.userID;
               window.localStorage.user = JSON.stringify(user);
               self.eventService.emit({com: 'facebook', action: 'login', data: user});
             },

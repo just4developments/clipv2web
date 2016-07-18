@@ -17,10 +17,11 @@ declare const FB:any;
 @Component({
     selector: 'user-menu',
     template: `
-      <li class="mdl-menu__item">{{user.name}}</li>
-      <li class="mdl-menu__item" (click)="goto('my-video')">Post</li>
-      <li class="mdl-menu__item" (click)="logout()">Logout</li>
+      <li class="mdl-menu__item" disabled>{{user.name}}</li>
+      <li class="mdl-menu__item" (click)="goto('my-video')"><i class="material-icons">sentiment_very_satisfied</i> Video của tôi</li>
+      <li class="mdl-menu__item" (click)="logout()"><i class="material-icons">power_settings_new</i> Logout</li>
     `,
+    styles: ['i { position: relative; top: 6px;}'],
     directives: [ROUTER_DIRECTIVES]
 })
 export class UserMenuComponent implements AfterViewInit { 

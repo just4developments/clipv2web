@@ -11,6 +11,7 @@ import { VideoService } from './video.service';
 import { SnackBarComponent } from './snack-bar.component';
 
 declare var componentHandler: any;
+declare var FB: any;
 
 @Component({
     selector: 'my-app',
@@ -49,9 +50,9 @@ declare var componentHandler: any;
             <a class="android-mobile-title mdl-layout-title" [routerLink]="['/']">
               ClipVNet<small>.com</small>
             </a>
-            <facebook-login *ngIf="!userService.currentUser" class="android-more-button"></facebook-login>
+            <facebook-login *ngIf="!userService.currentUser" class="android-more-button" [type]="0"></facebook-login>
             <a id="inbox-button" class="android-more-button" href="javascript: void(0)" *ngIf="userService.currentUser">
-              <span class="mdl-badge" data-badge="4">{{userService.currentUser.name}}</span>
+              <img src="http://graph.facebook.com/{{userService.currentUser.fbid}}/picture" class="avatar" width = "50"/>
             </a>
             <ul class="mdl-menu mdl-js-menu mdl-menu--bottom-right mdl-js-ripple-effect" for="inbox-button" *ngIf="userService.currentUser">
               <user-menu [user]="userService.currentUser"></user-menu>
@@ -60,14 +61,19 @@ declare var componentHandler: any;
         </div>
 
         <div class="android-drawer mdl-layout__drawer" *md nav-left>
-          <span class="mdl-layout-title" *ngIf="userService.currentUser">
-            {{userService.currentUser.name}}
-          </span>
+          <div *ngIf="userService.currentUser" class="user-infor">
+            <img src="http://graph.facebook.com/{{userService.currentUser.fbid}}/picture" class="avatar" width = "50"/>
+            <h6>{{userService.currentUser.name}}</h6>
+          </div>
           <nav class="mdl-navigation">
-            <a class="mdl-navigation__link {{actived('/')}}" [routerLink]="['/']" go-top>Mới nhất</a>
-            <a class="mdl-navigation__link {{actived('/')}}" [routerLink]="['/v/most']" go-top>Xem nhiều nhất</a>
-            <a class="mdl-navigation__link {{actived('/v/hot')}}" [routerLink]="['/v/hot']" go-top>Hot nhất</a>
+            <a class="mdl-navigation__link {{actived('/')}}" [routerLink]="['/']" go-top><i class="material-icons">whatshot</i> Mới nhất</a>
+            <a class="mdl-navigation__link {{actived('/v/most')}}" [routerLink]="['/v/most']" go-top><i class="material-icons">equalizer</i> Xem nhiều nhất</a>
+            <a class="mdl-navigation__link {{actived('/v/hot')}}" [routerLink]="['/v/hot']" go-top><i class="material-icons">star</i> Hot nhất</a>
+            <div class="android-drawer-separator"></div>
+            <a class="mdl-navigation__link {{actived('/my-video')}}" [routerLink]="['/my-video']" go-top *ngIf="userService.currentUser"><i class="material-icons">sentiment_very_satisfied</i> Video của tôi</a>
+            <a class="mdl-navigation__link" href="javascript:void(0);" (click)="logout()" *ngIf="userService.currentUser"><i class="material-icons">power_settings_new</i> Logout</a>
           </nav>
+          <facebook-login [type]="1" style="width: inherit;" *ngIf="!userService.currentUser"></facebook-login>
         </div>
 
         <div class="android-content mdl-layout__content" align="center" scroll-bottom>
@@ -140,6 +146,12 @@ export class App implements AfterViewInit, OnInit, OnDestroy {
 
   search(){    
     this.router.navigateByUrl('search/' + this.txtSearch + '?t=' + new Date().getTime());
+  }
+
+  logout(){
+    FB.logout((res:any) => {
+      this.eventService.emit({com: 'facebook', action: 'logout'});
+    });
   }
 }
 

@@ -10,6 +10,7 @@ import { UserListVideoComponent } from './user-list-video.component';
       <div class="mdl-grid">
         <div class="mdl-cell mdl-cell--8-col mdl-cell--8-col-tablet mdl-cell--4-col-phone mdl-cell--top">
           <user-search-video (added)="added($event)"></user-search-video>
+          <br/>
         </div>
         <div class="mdl-cell mdl-cell--4-col mdl-cell--8-col-tablet mdl-cell--4-col-phone mdl-cell--top">
           <user-list-video #myvideo></user-list-video>

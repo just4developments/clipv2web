@@ -1,5 +1,5 @@
 import { Component, Input, OnInit, OnDestroy, OnChanges, SimpleChange, ComponentResolver, ViewContainerRef, ComponentFactory, ViewChild, ComponentRef, AfterViewInit } from '@angular/core';
-import { ActivatedRoute, Router, ROUTER_DIRECTIVES, RouteParams } from '@angular/router';
+import { ActivatedRoute, Router, ROUTER_DIRECTIVES } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 
 import { EventService } from '../event.service';

@@ -102,9 +102,7 @@ export class App implements AfterViewInit, OnInit, OnDestroy {
   gsub: any;
 
   constructor(private zone: NgZone, private videoService: VideoService, private eventService: EventService, private router: Router, private userService: UserService){
-    this.videoService.getKeywords().subscribe(
-                 keywords => { this.keywords = keywords; },
-                 error =>  console.error(error));
+    this.keywords = this.videoService.getKeywords();
   }
 
   ngOnInit(){

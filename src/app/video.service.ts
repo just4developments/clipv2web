@@ -40,8 +40,14 @@ export class VideoDetails {
 
 @Injectable()
 export class VideoService {
-	constructor(private http: Http, private userService: UserService){
+  keywords: Array<any>;
 
+	constructor(private http: Http, private userService: UserService){
+    this.http.get(Config.HOST + '/keywords')
+          .map((res) => { return res.json(); } )
+          .catch(this.handleError).subscribe((keywords: Array<any>) => {
+          this.keywords = keywords;
+        }, (err: any) => { console.error(err); });;
 	}
 
   fromNowOn(v:any){
@@ -84,9 +90,7 @@ export class VideoService {
   }
 
   getKeywords(){
-    return this.http.get(Config.HOST + '/keywords')
-          .map((res) => { return res.json(); } )
-          .catch(this.handleError);
+    return this.keywords;
   }
 
   getKeywordVideos(keyword: string, meta:any): Observable<VideoCard[]> {

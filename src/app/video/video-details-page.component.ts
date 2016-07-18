@@ -22,12 +22,11 @@ import { VideoDetails, VideoService } from '../video.service';
 export class VideoDetailsPageComponent implements OnInit { 
   item: VideoDetails;
   sub: any;
-  filter: any;
   keywords: Array<any>;
 
   constructor(private route: ActivatedRoute, private videoService: VideoService){
-    this.filter = {};
-    this.route.data.subscribe((data: any) => {
+    this.keywords = this.videoService.getKeywords();
+    this.route.data.subscribe((data: any) => {      
       this.item = data.video;
       for(let i in this.item.keywords){
         for(let all of this.keywords){
@@ -37,9 +36,6 @@ export class VideoDetailsPageComponent implements OnInit {
         } 
       }
     });
-    this.videoService.getKeywords().subscribe(
-                 keywords => { this.keywords = keywords; },
-                 error =>  console.error(error));
   }
 
   ngOnInit(){

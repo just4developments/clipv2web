@@ -1,3 +1,2 @@
 1. Cache data in ram
-2. Use async route like +details in example
 3. Hide header bar when scroll bottom

@@ -4,6 +4,7 @@ import { Observable }     from 'rxjs/Observable';
 import 'rxjs/Rx'; 
 
 import { Config } from './config';
+import { HashService } from './hash.service';
 
 declare var window: any;
 
@@ -21,7 +22,7 @@ export class UserService {
 
   loginSystem(user: any): Observable<any>{
   	return this.http.post(Config.HOST + '/login', {token: user.accessToken}, new RequestOptions({ headers: new Headers({ 'Content-Type': 'application/json' }) }))
-      .map((res) => { return res.json(); } )
+      .map((res) => { return HashService.decrypt(res); } )
       .catch(this.handleError)    
   }
 

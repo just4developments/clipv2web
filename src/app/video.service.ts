@@ -7,6 +7,7 @@ import 'rxjs/Rx';
 import { Config } from './config';
 
 import { UserService } from './user.service';
+import { HashService } from './hash.service';
 
 export class VideoCard {
   _id: string;
@@ -44,7 +45,7 @@ export class VideoService {
 
 	constructor(private http: Http, private userService: UserService){
     this.http.get(Config.HOST + '/keywords')
-          .map((res) => { return res.json(); } )
+          .map((res) => { return res; } )
           .catch(this.handleError).subscribe((keywords: Array<any>) => {
           this.keywords = keywords;
         }, (err: any) => { console.error(err); });;
@@ -85,7 +86,7 @@ export class VideoService {
 
   searchVideos(txtSearch: string, meta:any): Observable<VideoCard[]> {
     return this.http.get(Config.HOST + '/video/search?txtSearch=' + txtSearch + '&page=' + meta.page + "&rows=" + meta.rows)
-          .map((res) => { return this.fromNowOn(res.json()); } )
+          .map((res:any) => { return this.fromNowOn(HashService.decrypt(res)); } )
           .catch(this.handleError);
   }
 
@@ -95,25 +96,25 @@ export class VideoService {
 
   getKeywordVideos(keyword: string, meta:any): Observable<VideoCard[]> {
     return this.http.get(Config.HOST + '/video/keyword?keyword=' + keyword + '&page=' + meta.page + "&rows=" + meta.rows)
-          .map((res) => { return res.json(); } )
+          .map((res:any) => { return HashService.decrypt(res) } )
           .catch(this.handleError);
   }
 
 	getNewestVideos(meta:any): Observable<VideoCard[]> {
 		return this.http.get(Config.HOST + '/video/newest?page=' + meta.page + "&rows=" + meta.rows)
-          .map((res) => { return this.fromNowOn(res.json()); } )
+          .map((res:any) => { console.log(res.headers.get('content-type')); return this.fromNowOn(HashService.decrypt(res)); } )
           .catch(this.handleError);
 	}
 
 	getMostVideos(meta:any): Observable<VideoCard[]> {
 		return this.http.get(Config.HOST + '/video/most?page=' + meta.page + "&rows=" + meta.rows)
-          .map((res) => { return this.fromNowOn(res.json()); } )
+          .map((res:any) => { return this.fromNowOn(HashService.decrypt(res)); } )
           .catch(this.handleError);
 	}
 
   getHotVideos(meta:any): Observable<VideoCard[]> {
     return this.http.get(Config.HOST + '/video/hot?page=' + meta.page + "&rows=" + meta.rows)
-          .map((res) => { return this.fromNowOn(res.json()); } )
+          .map((res:any) => { return this.fromNowOn(HashService.decrypt(res)); } )
           .catch(this.handleError);
   }
 
@@ -125,31 +126,31 @@ export class VideoService {
       s += '' + k._id;
     }
 		return this.http.get(Config.HOST + '/video/relate?id=' + id + '&keywords=' + s + '&updateat=' + updateat + '&page=' + meta.page + "&rows=" + meta.rows)
-          .map((res) => { return this.fromNowOn(res.json()); } )
+          .map((res:any) => { return this.fromNowOn(HashService.decrypt(res)); } )
           .catch(this.handleError);
 	}	
 
 	getVideo(id: string): Observable<VideoDetails>{
 		return this.http.get(Config.HOST + '/video/'+id)
-          .map((res) => { return res.json(); } )
+          .map((res:any) => { return HashService.decrypt(res); } )
           .catch(this.handleError);
 	}
 
   addVideo(v: any){
      return this.http.post(Config.HOST + '/video', v, new RequestOptions({ headers: new Headers({ 'Content-Type': 'application/json' }) }))
-          .map((res) => { return res.json(); } )
+          .map((res:any) => { return HashService.decrypt(res); } )
           .catch(this.handleError); 
   }
 
   removeVideo(id: any){
      return this.http.delete(Config.HOST + '/video/' + id, new RequestOptions({ headers: new Headers({ 'me': this.userService.currentUser._id }) }))
-          .map((res) => { return res.json(); } )
+          .map((res:any) => { return HashService.decrypt(res); } )
           .catch(this.handleError); 
   }
 
   getMyVideo(){
     return this.http.get(Config.HOST + '/myvideo', new RequestOptions({ headers: new Headers({ 'me': this.userService.currentUser._id }) }))
-          .map((res) => { return res.json(); } )
+          .map((res:any) => { return HashService.decrypt(res); } )
           .catch(this.handleError); 
   }
   

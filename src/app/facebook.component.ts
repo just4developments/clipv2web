@@ -1,5 +1,6 @@
 import {Component, OnInit, Input, EventEmitter, Output, ElementRef, AfterViewInit, OnDestroy, OnChanges, SimpleChange, Renderer} from '@angular/core';
 import {ROUTER_DIRECTIVES, Router} from "@angular/router";
+import { SafeResourceUrl, DomSanitizationService } from '@angular/platform-browser';
 import {EventService} from "./event.service";
 import {UserService} from "./user.service";
 
@@ -9,11 +10,11 @@ declare var location: any;
 declare var window: any;
 const FANPAGE:string = "https://www.facebook.com/clipvnet/";
 
-class AbsFacebookComponent implements OnInit, OnDestroy {
+class AbsFacebookComponent implements OnInit, OnDestroy, AfterViewInit {
   gsub:any;
   isRenderer: boolean;
 
-  constructor(protected eventService: EventService, protected e: ElementRef, protected tag: string) {    
+  constructor(protected eventService: EventService, protected e: ElementRef, protected tag: string, protected renderLater?:boolean) {    
     
   }
 
@@ -21,11 +22,14 @@ class AbsFacebookComponent implements OnInit, OnDestroy {
     this.gsub = this.eventService.emitter.subscribe((data: any) => {
       if(data.com === 'facebook'){
         if(data.action === 'loaded') {             
-          this.render();
+          if(!this.renderLater) this.render();
         }
       }
-    });
-    this.render();
+    });    
+  }
+
+  ngAfterViewInit(){
+    if(!this.renderLater) this.render();
   }
 
   ngOnDestroy(){
@@ -39,6 +43,61 @@ class AbsFacebookComponent implements OnInit, OnDestroy {
       FB.XFBML.parse(fc);
       this.isRenderer =  true;
     }catch(e){}
+  }
+}
+@Component({
+    selector: 'facebook-player',
+    template: '<div class="fb-video" [attr.data-href]="link" style="width: 100%" data-show-text="false"><blockquote cite="https://www.facebook.com/facebook/videos/10153231379946729/" class="fb-xfbml-parse-ignore"><a href="https://www.facebook.com/facebook/videos/10153231379946729/">How to Share With Just Friends</a><p>How to share with just friends.</p>Được đăng bởi <a href="https://www.facebook.com/facebook/">Facebook</a> 5 Tháng 12 2014</blockquote></div>',    
+    directives: [ROUTER_DIRECTIVES]
+})
+export class FacebookPlayerComponent extends AbsFacebookComponent implements OnChanges {
+  @Input() link:string;
+
+  constructor(protected eventService: EventService, protected e: ElementRef) {        
+    super(eventService, e, 'facebook-player', true);
+  }
+
+  ngOnChanges(changes: {[propertyName: string]: SimpleChange}){ 
+    this.renderLater = false;
+    this.render();    
+  }
+}
+
+@Component({
+    selector: 'html5-player',
+    template: `
+      <video width="100%" controls>
+        <source [src]="url" type="video/mp4">
+      </video>
+    `
+})
+export class Html5PlayerComponent implements OnChanges {
+  @Input() link:string;
+  url: SafeResourceUrl;
+
+  constructor(private sanitizer: DomSanitizationService, private r:Renderer, private e: ElementRef) {    
+    
+  }
+
+  ngOnChanges(changes: {[propertyName: string]: SimpleChange}){ 
+    this.url = this.sanitizer.bypassSecurityTrustResourceUrl(this.link);
+  }
+}
+
+@Component({
+    selector: 'youtube-player',
+    template: '<iframe width="560" height="349" [src]="url" frameborder="0" allowfullscreen></iframe>'
+})
+export class YoutubePlayerComponent implements OnChanges {
+  @Input() link:string;
+  url: SafeResourceUrl;
+
+  constructor(private sanitizer: DomSanitizationService, private r:Renderer, private e: ElementRef) {    
+    
+  }
+
+  ngOnChanges(changes: {[propertyName: string]: SimpleChange}){ 
+    this.url = this.sanitizer.bypassSecurityTrustResourceUrl(this.link);
   }
 }
 

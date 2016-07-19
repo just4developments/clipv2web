@@ -12,7 +12,7 @@ import { HowlongPipe } from '../filter.pipe';
       <div class="mdl-card__title">
          <h4 class="mdl-card__title-text main-color">{{item.title}}</h4>
       </div>      
-      <div class="mdl-card__media">        
+      <div class="mdl-card__media">
         <img src="{{item.image}}" *ngIf="!item.youtubeid">
         <img src="http://i.ytimg.com/vi/{{item.youtubeid}}/0.jpg" *ngIf="item.youtubeid">
       </div>

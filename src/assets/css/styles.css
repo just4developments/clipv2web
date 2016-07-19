@@ -82,6 +82,13 @@
     top: 0px !important;
   }
 }
+@media (min-width: 480px){
+  video-card-item .mdl-card__media {
+    max-height: 172px !important;
+    background-color: #000 !important;
+    padding: auto;
+  }
+}
 @media (max-width: 839px) and (min-width: 480px){
   .mdl-layout--fixed-header.bar-hide {
     top: 0px !important;
@@ -98,8 +105,7 @@
   }
   .isLastAutoScroll {
     height: auto;
-  }
-  
+  }  
 }
 @media screen and (min-width: 1200px) {
   #mainContent {

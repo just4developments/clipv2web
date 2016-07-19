@@ -102,7 +102,7 @@ export class VideoService {
 
 	getNewestVideos(meta:any): Observable<VideoCard[]> {
 		return this.http.get(Config.HOST + '/video/newest?page=' + meta.page + "&rows=" + meta.rows)
-          .map((res:any) => { console.log(res.headers.get('content-type')); return this.fromNowOn(HashService.decrypt(res)); } )
+          .map((res:any) => { return this.fromNowOn(HashService.decrypt(res)); } )
           .catch(this.handleError);
 	}
 

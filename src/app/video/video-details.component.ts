@@ -1,11 +1,10 @@
 import { Component, Input, OnInit, OnChanges, SimpleChange } from '@angular/core';
 import { ROUTER_DIRECTIVES } from '@angular/router';
-import { SafeResourceUrl, DomSanitizationService } from '@angular/platform-browser';
 import { Title } from '@angular/platform-browser';
 
 import { VideoDetails } from '../video.service';
 import { GoTop } from '../video.directive';
-import { FacebookCommentComponent, FacebookShareComponent } from '../facebook.component';
+import { FacebookCommentComponent, FacebookShareComponent, FacebookPlayerComponent, YoutubePlayerComponent, Html5PlayerComponent } from '../facebook.component';
 
 declare const location: any;
 
@@ -32,10 +31,9 @@ declare const location: any;
           </div>
         </div>
         <div class="videoWrapper">        
-          <iframe width="560" height="349" [src]="url" frameborder="0" allowfullscreen *ngIf="item.youtubeid"></iframe>
-          <video width="100%" *ngIf="!item.youtubeid" controls>
-            <source [src]="item.link" type="video/mp4">
-          </video>
+          <youtube-player [link]="item.link" *ngIf="item.youtubeid"></youtube-player>
+          <facebook-player [link]="item.link" *ngIf="item.facebookid"></facebook-player>
+          <html5-player [link]="item.link" *ngIf="!item.youtubeid && !item.facebookid"></html5-player>          
         </div>
         <div class="keywords">
           <a *ngFor="let k of item.keywords" go-top style="float: left;" class="mdl-button mdl-js-button" [routerLink]="['/k/'+k._id]">{{k.name}}</a>
@@ -45,20 +43,18 @@ declare const location: any;
       </div>
     `,
     styles: ['.mdl-card__supporting-text, .mdl-card__supporting-text i {font-size: 12px}'],    
-    directives: [GoTop, FacebookCommentComponent, FacebookShareComponent, ROUTER_DIRECTIVES]
+    directives: [GoTop, FacebookCommentComponent, FacebookShareComponent, ROUTER_DIRECTIVES, FacebookPlayerComponent, YoutubePlayerComponent, Html5PlayerComponent]
 })
 export class VideoDetailsComponent implements OnChanges { 
-  @Input() item: VideoDetails;    
-  url: SafeResourceUrl;
+  @Input() item: VideoDetails;
   locationHref: string;
 
-  constructor(private sanitizer: DomSanitizationService, private title: Title){
+  constructor(private title: Title){
     
   }
 
   ngOnChanges(changes: {[propertyName: string]: SimpleChange}){
     this.locationHref = location.href;
     this.title.setTitle(this.item.title);
-    if(this.item.youtubeid) this.url = this.sanitizer.bypassSecurityTrustResourceUrl(this.item.link);
   }
 }

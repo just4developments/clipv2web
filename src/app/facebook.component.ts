@@ -14,7 +14,7 @@ class AbsFacebookComponent implements OnInit, OnDestroy, AfterViewInit {
   gsub:any;
   isRenderer: boolean;
 
-  constructor(protected eventService: EventService, protected e: ElementRef, protected tag: string, protected renderLater?:boolean) {    
+  constructor(protected eventService: EventService, protected e: ElementRef, protected tag: string) {    
     
   }
 
@@ -22,44 +22,45 @@ class AbsFacebookComponent implements OnInit, OnDestroy, AfterViewInit {
     this.gsub = this.eventService.emitter.subscribe((data: any) => {
       if(data.com === 'facebook'){
         if(data.action === 'loaded') {             
-          if(!this.renderLater) this.render();
+          this.render();
         }
       }
     });    
   }
 
   ngAfterViewInit(){
-    if(!this.renderLater) this.render();
+    this.render();
   }
 
   ngOnDestroy(){
     this.gsub.unsubscribe();
   }
 
-  protected render(){
+  protected render(){    
     if(this.isRenderer) return;
     try{
-      var fc: any = this.e.nativeElement.querySelector(this.tag);
-      FB.XFBML.parse(fc);
+      FB.XFBML.parse(this.e.nativeElement);
       this.isRenderer =  true;
     }catch(e){}
   }
 }
 @Component({
     selector: 'facebook-player',
-    template: '<div class="fb-video" [attr.data-href]="link" style="width: 100%" data-show-text="false"><blockquote cite="https://www.facebook.com/facebook/videos/10153231379946729/" class="fb-xfbml-parse-ignore"><a href="https://www.facebook.com/facebook/videos/10153231379946729/">How to Share With Just Friends</a><p>How to share with just friends.</p>Được đăng bởi <a href="https://www.facebook.com/facebook/">Facebook</a> 5 Tháng 12 2014</blockquote></div>',    
+    template: '<div class="fb-video" [attr.data-href]="link" style="width: 100%" data-show-text="false" [attr.data-autoplay]="autoplay"></div>',
     directives: [ROUTER_DIRECTIVES]
 })
 export class FacebookPlayerComponent extends AbsFacebookComponent implements OnChanges {
   @Input() link:string;
+  autoplay:boolean;
 
   constructor(protected eventService: EventService, protected e: ElementRef) {        
-    super(eventService, e, 'facebook-player', true);
+    super(eventService, e, 'facebook-player');
   }
 
-  ngOnChanges(changes: {[propertyName: string]: SimpleChange}){ 
-    this.renderLater = false;
-    this.render();    
+  ngOnChanges(changes: {[propertyName: string]: SimpleChange}){     
+    if(!changes['link'].isFirstChange()){
+      this.autoplay = true;
+    }
   }
 }
 
@@ -71,16 +72,28 @@ export class FacebookPlayerComponent extends AbsFacebookComponent implements OnC
       </video>
     `
 })
-export class Html5PlayerComponent implements OnChanges {
+export class Html5PlayerComponent implements OnChanges, AfterViewInit {
   @Input() link:string;
   url: SafeResourceUrl;
+  video: any;
 
   constructor(private sanitizer: DomSanitizationService, private r:Renderer, private e: ElementRef) {    
     
   }
 
+  ngAfterViewInit(){
+    this.video = this.e.nativeElement.querySelector('video');
+    this.video.volume = 0.5;
+  }
+
   ngOnChanges(changes: {[propertyName: string]: SimpleChange}){ 
-    this.url = this.sanitizer.bypassSecurityTrustResourceUrl(this.link);
+    this.url = this.sanitizer.bypassSecurityTrustUrl(this.link);
+    if(!changes['link'].isFirstChange()){      
+      setTimeout(() =>{
+        this.video.load();
+        this.video.play();
+      });      
+    }
   }
 }
 
@@ -97,6 +110,9 @@ export class YoutubePlayerComponent implements OnChanges {
   }
 
   ngOnChanges(changes: {[propertyName: string]: SimpleChange}){ 
+    if(!changes['link'].isFirstChange()){
+      this.link += '?autoplay=1';
+    }
     this.url = this.sanitizer.bypassSecurityTrustResourceUrl(this.link);
   }
 }

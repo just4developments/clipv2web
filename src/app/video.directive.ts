@@ -101,7 +101,7 @@ export class GoTop implements AfterViewInit {
 
   @HostListener('click', ['$event']) 
   onClick(event: any){
-    if(this.container.scrollTop !== 0){
+    if(event.which === 1 && this.container.scrollTop !== 0){
       setTimeout(()=>{
         this.container.scrollTop = 0;
       }, 200);    
@@ -125,8 +125,10 @@ export class NavLeft implements AfterViewInit {
 
   @HostListener('click', ['$event']) 
   onClick(event: any){
-    window.document.querySelector('.mdl-layout__obfuscator').classList.remove('is-visible');
-    this.e.nativeElement.classList.remove('is-visible');
+    if(event.which === 1){
+      window.document.querySelector('.mdl-layout__obfuscator').classList.remove('is-visible');
+      this.e.nativeElement.classList.remove('is-visible');
+    }
   }
 }
 

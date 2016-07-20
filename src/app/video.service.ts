@@ -84,6 +84,12 @@ export class VideoService {
     return v;
   }
 
+  getYoutube(id: string): Observable<VideoCard[]> {
+    return this.http.get(Config.HOST + '/youtube/' + id)
+          .map((res:any) => { return HashService.decrypt(res); } )
+          .catch(this.handleError);
+  }
+
   searchVideos(txtSearch: string, meta:any): Observable<VideoCard[]> {
     return this.http.get(Config.HOST + '/video/search?txtSearch=' + txtSearch + '&page=' + meta.page + "&rows=" + meta.rows)
           .map((res:any) => { return this.fromNowOn(HashService.decrypt(res)); } )

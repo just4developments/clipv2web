@@ -1,5 +1,6 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { ROUTER_DIRECTIVES } from '@angular/router';
+import { SafeResourceUrl, DomSanitizationService } from '@angular/platform-browser';
 
 import { VideoCard } from '../video.service';
 import { GoTop } from '../video.directive';
@@ -13,8 +14,7 @@ import { HowlongPipe } from '../filter.pipe';
          <h4 class="mdl-card__title-text main-color">{{item.title}}</h4>
       </div>      
       <div class="mdl-card__media">
-        <img src="{{item.image}}" *ngIf="!item.youtubeid">
-        <img src="http://i.ytimg.com/vi/{{item.youtubeid}}/0.jpg" *ngIf="item.youtubeid">
+        <img [src]="url">
       </div>
       <div class="howlong" *ngIf="item.duration"><i class="material-icons dp48">alarm</i>{{item.duration | HowlongPipe}}</div>
       <div class="mdl-card__supporting-text icon-des mdl-grid des-color">
@@ -34,7 +34,15 @@ import { HowlongPipe } from '../filter.pipe';
     pipes: [HowlongPipe],
     directives: [GoTop, ROUTER_DIRECTIVES]
 })
-export class VideoCardItemComponent { 
-  @Input()
-  item: VideoCard;
+export class VideoCardItemComponent implements OnInit { 
+  @Input() item: VideoCard;
+  url: SafeResourceUrl;
+
+  constructor(private sanitizer: DomSanitizationService){
+    
+  }
+
+  ngOnInit(){
+    this.url = this.sanitizer.bypassSecurityTrustUrl(this.item.image);   
+  }
 }

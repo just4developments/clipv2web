@@ -1,2 +1,0 @@
-1. Cache data in ram
-3. Hide header bar when scroll bottom

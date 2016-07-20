@@ -16,10 +16,12 @@ import { EventService } from '../event.service';
         <div                class="mdl-cell mdl-cell--4-col mdl-cell--8-col-tablet mdl-cell--4-col-phone mdl-cell--top">
           <facebook-like *xl class="mdl-card"></facebook-like>
           <br/>
+          <br/>
           <div class="fixed-col">
-            <video-relation-list [mode]="'most'" [page]="1" [rows]="5"></video-relation-list>
+            <video-relation-list [mode]="'most'" [page]="1" [rows]="12"></video-relation-list>
             <br/>
-            <video-relation-list [mode]="'hot'" [page]="1" [rows]="5"></video-relation-list>
+            <br/>
+            <video-relation-list [mode]="'hot'" [page]="1" [rows]="12"></video-relation-list>
           </div>
         </div>
       </div>

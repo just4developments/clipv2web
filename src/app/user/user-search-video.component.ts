@@ -23,7 +23,7 @@ declare var FB:any;
         <div class="" style="width: 100%">
           <input class="mdl-textfield__input" type="text" id="link" [(ngModel)]="link" (keypress)="find($event)" required select-when-focus>
           <label class="mdl-textfield__label" for="link">
-            Youtube link
+            Youtube/Facebook link
           </label>
         </div>
       </div>

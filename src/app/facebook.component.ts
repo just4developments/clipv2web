@@ -8,6 +8,7 @@ declare var FB:any;
 declare var document: any;
 declare var location: any;
 declare var window: any;
+declare var ENV: any;
 const FANPAGE:string = "https://www.facebook.com/clipvnet/";
 
 class AbsFacebookComponent implements OnInit, OnDestroy, AfterViewInit {

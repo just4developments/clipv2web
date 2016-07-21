@@ -3,7 +3,6 @@ let fs = require('fs');
 let app = express();
 var etag = require('etag');
 var compression = require('compression');
-var render = require('./render');
 
 let checkBot = (req, fcTrue, fcFalse) => {
 	// let agent = req.headers['user-agent'];
@@ -15,7 +14,7 @@ let checkBot = (req, fcTrue, fcFalse) => {
 }
 
 app.use(compression({ threshold: 0 }));
-app.use(express.static(__dirname + '/dist'));
+app.use(express.static(__dirname + '/dist', {index: false}));
 
 let page = (p, res) => {
  res.sendFile(p, { root: __dirname + '/dist'});
@@ -28,11 +27,7 @@ let temp = (p, res) => {
 let handler = (req, res) => {
 	console.log(req.path);
 	checkBot(req, () => {
-		let url = req.protocol + "://" + req.get('host') + req.originalUrl;
-		let file = req.originalUrl.replace(/\//g, '-')+'.html';				
-		render(url, file, () => {
-			temp(file, res);
-		}, (err) => { console.error(err); });
+		page('index.html', res);
 	}, () => {
 		page('index.html', res);
 	});

@@ -3,13 +3,12 @@ import { Input, OnInit, OnDestroy, Directive, Output, EventEmitter, ElementRef, 
 import { EventService } from './event.service';
 
 declare var window: any;
-
-///////////////////////////////////////////////////////////////////
+declare var componentHandler: any;
 
 @Directive({
   selector: '[scroll-bottom]'
 })
-export class MainScrollDirective implements OnInit, OnDestroy, AfterViewInit {
+export class MainScrollDirective implements OnInit, OnDestroy {
 
   rightCol: any;
   isLoadedData: boolean;
@@ -17,10 +16,6 @@ export class MainScrollDirective implements OnInit, OnDestroy, AfterViewInit {
   m: any;
  
   constructor(private eventService: EventService, private e: ElementRef) {
-    
-  }
-
-  ngAfterViewInit() {
     
   }
 
@@ -82,9 +77,6 @@ export class SelectWhenFocusDirective {
 
 }
 
-
-///////////////////////////////////////////////////////////////////
-
 @Directive({
     selector: '[go-top]'
 })    
@@ -112,14 +104,10 @@ export class GoTop implements AfterViewInit {
 @Directive({
     selector: '[nav-left]'
 })    
-export class NavLeft implements AfterViewInit {
+export class NavLeft {
   container: any;
 
   constructor(private e: ElementRef){
-    
-  }
-
-  ngAfterViewInit() {
     
   }
 
@@ -132,9 +120,6 @@ export class NavLeft implements AfterViewInit {
   }
 }
 
-///////////////////////////////////////////////////////////////////
-declare var componentHandler: any;
-
 @Directive({
     selector: '[mdl]'
 })    
@@ -142,22 +127,5 @@ export class MDL implements AfterViewInit {
 	
   ngAfterViewInit() {
     componentHandler.upgradeAllRegistered();
-  }
-}
-
-///////////////////////////////////////////////////////////////////
-declare const FB:any;
-
-@Directive({
-    selector: '[facebook]'
-})    
-export class Facebook implements AfterViewInit {
-  
-  constructor() {    
-    
-  }
-
-  ngAfterViewInit() {
-    
   }
 }

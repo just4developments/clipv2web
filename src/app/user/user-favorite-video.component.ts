@@ -18,8 +18,8 @@ import { GoTop } from '../video.directive';
         <ul class="mdl-list" *ngIf="videos && videos.length > 0">
           <li class="mdl-list__item mdl-list__item--three-line" style="width: 100%" *ngFor="let item of videos">
             <a class="mdl-list__item-primary-content nothing" [routerLink]="['/'+item._id+'/'+item.title0]" go-top>
-              <img src="{{item.image}}" *ngIf="!item.youtubeid" width="80" style="float: left; margin-right: 5px;" class="rounded">
-              <img src="http://i.ytimg.com/vi/{{item.youtubeid}}/0.jpg" *ngIf="item.youtubeid" width="80" style="float: left; margin-right: 5px;" class="rounded">
+              <img src="{{item.image}}" *ngIf="!item.youtubeid" width="100" style="float: left; margin-right: 5px;" class="rounded">
+              <img src="http://i.ytimg.com/vi/{{item.youtubeid}}/0.jpg" *ngIf="item.youtubeid" width="100" style="float: left; margin-right: 5px;" class="rounded">
               <div class="main-color title">{{item.title}}</div>
               <span class="mdl-list__item-text-body des-color">
                 {{item.updateat | date: 'dd/MM/yyyy'}}

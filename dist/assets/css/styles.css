@@ -207,7 +207,7 @@ video-relation-list .mdl-card__title-text {
 user-favorite-video .mdl-list,
 user-list-video .mdl-list,
 video-relation-list .mdl-list {
-  padding: 0px;
+  padding: 0px 0px 30px;
   margin: 0px;
 }
 user-favorite-video .title,
@@ -243,7 +243,7 @@ video-relation-item .mdl-list__item-text-body i {
 video-relation-item .howlong{
   position: absolute;
   color: #ccc;
-  bottom: -5px;
+  bottom: 5px;
   background-color: #0E0E0E;
   border: solid 1px #000;
   border-radius: 0px 30px 30px 0px;

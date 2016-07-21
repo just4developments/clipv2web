@@ -13,7 +13,7 @@ export class VideoCard {
   _id: string;
   link: string;
   title: string;
-  utitle: string;
+  title0: string;
   image: string;
   creator: string;
   updateat: Date;
@@ -28,7 +28,7 @@ export class VideoDetails {
   _id: string;
   link: string;
   title: string;
-  utitle: string;
+  title0: string;
   image: string;
   creator: string;
   updateat: Date;

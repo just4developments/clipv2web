@@ -9,7 +9,7 @@ import { HowlongPipe } from '../filter.pipe';
     selector: 'video-relation-item',
     template: `
       <li class="mdl-list__item mdl-list__item--three-line">
-        <a class="mdl-list__item-primary-content nothing" [routerLink]="['/'+item._id]" go-top>          
+        <a class="mdl-list__item-primary-content nothing" [routerLink]="['/'+item._id+'/'+item.title0]" go-top>          
           <div class="img-des">
             <img src="{{item.image}}" width="80" class="rounded" *ngIf="!item.youtubeid">
             <img src="http://i.ytimg.com/vi/{{item.youtubeid}}/1.jpg" width="80" style="float: left; margin-right: 5px;" class="rounded" *ngIf="item.youtubeid">                    

@@ -91,7 +91,8 @@ export class UserSearchVideoComponent implements AfterViewInit {
             this.item.youtubeid = m[1];
             this.item.image = `http://i.ytimg.com/vi/${this.item.youtubeid}/0.jpg`; 
             this.item.link = `https://www.youtube.com/embed/${this.item.youtubeid}`;
-            this.item.creator = this.userService.currentUser._id;
+            this.item.creatorid = this.userService.currentUser._id;
+            this.item.creator = this.userService.currentUser.name;
             var self:any = this;
             this.videoService.getYoutube(this.item.youtubeid).subscribe(
              (v: any) => { 
@@ -103,7 +104,8 @@ export class UserSearchVideoComponent implements AfterViewInit {
           }          
         }else if(this.link.indexOf('facebook.com') != -1){
           //https://www.facebook.com/facebook/videos/10153231379946729/
-          this.item.creator = this.userService.currentUser._id;
+          this.item.creatorid = this.userService.currentUser._id;
+          this.item.creator = this.userService.currentUser.name;
           this.item.link = this.link;
           let m = this.link.match(/\/videos\/([^\?\/]+)/);
           if(m && m.length > 1){

@@ -21,7 +21,7 @@ export const routes: RouterConfig = [
       { path: 'search/:txtSearch', component: 'VideoCardListComponent' }
     ] 
   },    
-  { path: ':id', component: 'VideoDetailsPageComponent', 
+  { path: ':id/:title', component: 'VideoDetailsPageComponent', 
     resolve: {
       video: VideoResolver
     } 

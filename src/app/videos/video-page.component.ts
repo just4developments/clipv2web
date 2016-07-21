@@ -4,6 +4,7 @@ import { ActivatedRoute, Router, ROUTER_DIRECTIVES } from '@angular/router';
 
 import { VideoRelationListComponent } from './video-relation-list.component';
 import { FacebookLikeComponent } from '../facebook.component';
+import { UserFavoriteVideoComponent } from '../user/user-favorite-video.component'; 
 import { EventService } from '../event.service';
 
 @Component({
@@ -18,15 +19,18 @@ import { EventService } from '../event.service';
           <br/>
           <br/>
           <div class="fixed-col">
-            <video-relation-list [mode]="'most'" [page]="1" [rows]="12"></video-relation-list>
+            <user-favorite-video [rows]="3"></user-favorite-video>
             <br/>
             <br/>
-            <video-relation-list [mode]="'hot'" [page]="1" [rows]="12"></video-relation-list>
+            <video-relation-list [mode]="'most'" [page]="1" [rows]="8"></video-relation-list>
+            <br/>
+            <br/>
+            <video-relation-list [mode]="'hot'" [page]="1" [rows]="8"></video-relation-list>
           </div>
         </div>
       </div>
     `,
-    directives: [VideoRelationListComponent, FacebookLikeComponent, CORE_DIRECTIVES, ROUTER_DIRECTIVES]
+    directives: [VideoRelationListComponent, FacebookLikeComponent, CORE_DIRECTIVES, ROUTER_DIRECTIVES, UserFavoriteVideoComponent]
 })
 export class VideoPageComponent implements OnInit, OnDestroy { 
 

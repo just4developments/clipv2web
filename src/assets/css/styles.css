@@ -112,6 +112,9 @@
     width: 1200px;
   }
 }
+*[ng-reflect-router-link] {
+  cursor: pointer;
+}
 facebook-like {
   min-height: 0px !important;
   padding: 16px;
@@ -190,20 +193,24 @@ facebook-like {
 .des-color {
   color: #B6B6B6;
 }
+user-favorite-video .mdl-card,
 user-list-video .mdl-card,
 video-relation-list .mdl-card {
   width: 100%;
 }
+user-favorite-video .mdl-card__title-text,
 user-list-video .mdl-card__title-text,
 video-relation-list .mdl-card__title-text {
   font-size: 20px;
   color: #000;
 }
+user-favorite-video .mdl-list,
 user-list-video .mdl-list,
 video-relation-list .mdl-list {
   padding: 0px;
   margin: 0px;
 }
+user-favorite-video .title,
 user-list-video .title,
 video-relation-item .title {
   display: -webkit-box;
@@ -212,15 +219,19 @@ video-relation-item .title {
   overflow: hidden;
   text-overflow: ellipsis;
 }
+user-favorite-video .mdl-list__item-text-body,
 user-list-video .mdl-list__item-text-body,
 video-relation-item .mdl-list__item-text-body{
   text-align: right;
 }
+user-favorite-video .title,
 user-list-video .title,
 video-relation-item .title {
   font-size: 13px;
   font-weight: 400;
 }
+user-favorite-video .mdl-list__item-text-body,
+user-favorite-video .mdl-list__item-text-body i,
 user-list-video .mdl-list__item-text-body,
 user-list-video .mdl-list__item-text-body i,
 video-relation-item .mdl-list__item-text-body,

@@ -190,7 +190,8 @@ export class FacebookLoginComponent implements OnInit, OnDestroy {
           self.userService.loginSystem(res).subscribe(
             (user: any) =>{
               user.fbid = resp.authResponse.userID;
-              window.localStorage.user = JSON.stringify(user);
+              self.userService.currentUser = user;
+              self.userService.save();
               self.eventService.emit({com: 'facebook', action: 'login', data: user});
             },
             (error: any) => {

@@ -7,13 +7,13 @@ import { UserService } from '../user.service';
 import { GoTop } from '../video.directive';
 
 @Component({
-    selector: 'user-list-video',
+    selector: 'user-favorite-video',
     template: `
       <div class="mdl-card mdl-shadow--2dp">
         <div class="mdl-card__title mdl-card--border">
-          <h6 class="mdl-card__title-text">Video của tôi</h6>
+          <h6 class="mdl-card__title-text" [routerLink]="['/my-video']">Video yêu thích của tôi</h6>
           <div class="mdl-layout-spacer"></div>
-          <i class="material-icons mdl-list__item-icon">sentiment_very_satisfied</i>
+          <i class="material-icons mdl-list__item-icon">favorite</i>
         </div>
         <ul class="mdl-list" *ngIf="videos && videos.length > 0">
           <li class="mdl-list__item mdl-list__item--three-line" style="width: 100%" *ngFor="let item of videos">
@@ -25,8 +25,7 @@ import { GoTop } from '../video.directive';
                 {{item.updateat | date: 'dd/MM/yyyy'}}
               </span>
             </a>
-            <i class="material-icons done" *ngIf="item.status" title="Đã được duyệt">beenhere</i>
-            <a class="mdl-list__item-secondary-action" href="javascript:void(0)" (click)="remove(item)" *ngIf="!item.status" title="Đang chờ duyệt"><i class="material-icons">remove_circle</i></a>
+            <a class="mdl-list__item-secondary-action" href="javascript:void(0)" (click)="remove(item)"><i class="material-icons">remove_circle</i></a>
           </li>          
         </ul>
         <div class="mdl-card__supporting-text" *ngIf="!videos || videos.length === 0">
@@ -34,10 +33,11 @@ import { GoTop } from '../video.directive';
         </div>
       </div>
     `,
-    styles: ['.mdl-card {min-height: 0px}', '.done {color: #45C145;}'],
+    styles: ['.mdl-card {min-height: 0px}'],
     directives: [ROUTER_DIRECTIVES, GoTop]
 })
-export class UserListVideoComponent implements OnInit, AfterViewInit, OnDestroy {
+export class UserFavoriteVideoComponent implements OnInit, AfterViewInit, OnDestroy {
+  @Input() rows:number;
   videos: Array<VideoCard>;
   isLoaded: boolean= false;
   gsub: any;
@@ -62,10 +62,9 @@ export class UserListVideoComponent implements OnInit, AfterViewInit, OnDestroy 
   }
 
   loadMyVideo(){
-    if(!this.userService.currentUser) return;
-    this.videoService.getMyVideo().subscribe(
-                 videos => { this.videos = videos; },
-                 error =>  console.error(error));     
+    if(!this.userService.currentUser) return;    
+    if(this.rows) this.videos = this.userService.currentUser.favorites.slice(0, this.rows);
+    else this.videos = this.userService.currentUser.favorites;
   }
 
   ngOnDestroy(){
@@ -78,15 +77,16 @@ export class UserListVideoComponent implements OnInit, AfterViewInit, OnDestroy 
 
   public add(item: VideoCard){
     this.videos.splice(0, 0, item);
-    this.eventService.emit({com: 'snack-bar', msg: 'Đã upload clip này lên server (Đang chờ duyệt...)'}); 
   }
 
   remove(item: VideoCard){
-    this.videoService.removeVideo(item._id).subscribe(
-                       (v: any) => { 
-                         this.videos.splice(this.videos.indexOf(item), 1);
-                         this.eventService.emit({com: 'snack-bar', msg: 'Đã hủy bỏ upload clip này lên server'}); 
-                       },
-                       error =>  console.error(error));
+    this.videoService.removeFavorite(item._id).subscribe(
+     (v: any) => {        
+       this.userService.currentUser.favorites = v;
+       this.userService.save();
+       this.loadMyVideo();
+       this.eventService.emit({com: 'snack-bar', msg: 'Đã xóa khỏi danh sách yêu thích'}); 
+     },
+     error =>  console.error(error));
   }
 }

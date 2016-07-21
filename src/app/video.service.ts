@@ -142,19 +142,31 @@ export class VideoService {
           .catch(this.handleError);
 	}
 
-  addVideo(v: any){
-     return this.http.post(Config.HOST + '/video', v, new RequestOptions({ headers: new Headers({ 'Content-Type': 'application/json' }) }))
+  addVideo(v: any): Observable<VideoCard[]> {
+     return this.http.post(Config.HOST + '/video', v, new RequestOptions({ headers: new Headers({ 'Content-Type': 'application/json', 'me': this.userService.currentUser._id }) }))
           .map((res:any) => { return HashService.decrypt(res); } )
           .catch(this.handleError); 
   }
 
-  removeVideo(id: any){
+  addFavorite(v: any): Observable<VideoCard[]> {
+     return this.http.post(Config.HOST + '/favorite', v, new RequestOptions({ headers: new Headers({ 'Content-Type': 'application/json', 'me': this.userService.currentUser._id }) }))
+          .map((res:any) => { return HashService.decrypt(res); } )
+          .catch(this.handleError); 
+  }
+
+  removeVideo(id: any): Observable<VideoCard[]> {
      return this.http.delete(Config.HOST + '/video/' + id, new RequestOptions({ headers: new Headers({ 'me': this.userService.currentUser._id }) }))
           .map((res:any) => { return HashService.decrypt(res); } )
           .catch(this.handleError); 
   }
 
-  getMyVideo(){
+  removeFavorite(id: any): Observable<VideoCard[]> {
+     return this.http.delete(Config.HOST + '/favorite/' + id, new RequestOptions({ headers: new Headers({ 'me': this.userService.currentUser._id }) }))
+          .map((res:any) => { return HashService.decrypt(res); } )
+          .catch(this.handleError); 
+  }
+
+  getMyVideo(): Observable<VideoCard[]> {
     return this.http.get(Config.HOST + '/myvideo', new RequestOptions({ headers: new Headers({ 'me': this.userService.currentUser._id }) }))
           .map((res:any) => { return HashService.decrypt(res); } )
           .catch(this.handleError); 

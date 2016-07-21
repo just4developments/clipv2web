@@ -26,6 +26,10 @@ export class UserService {
       .catch(this.handleError)    
   }
 
+  save(){
+    window.localStorage.user = JSON.stringify(this.currentUser);
+  }
+
   logout(){    
     this.currentUser = undefined;
     delete window.localStorage.user;

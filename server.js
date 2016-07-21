@@ -1,7 +1,6 @@
 let express = require('express');
 let fs = require('fs');
 let app = express();
-var etag = require('etag');
 var compression = require('compression');
 
 let checkBot = (req, fcTrue, fcFalse) => {
@@ -16,16 +15,17 @@ let checkBot = (req, fcTrue, fcFalse) => {
 app.use(compression({ threshold: 0 }));
 app.use(express.static(__dirname + '/dist', {index: false}));
 
+let indexLastModified = new Date(fs.statSync('./dist/index.html').mtime).toUTCString();
+
 let page = (p, res) => {
- res.sendFile(p, { root: __dirname + '/dist'});
+ res.sendFile(p, { root: __dirname + '/dist', headers: { 'Last-Modified': indexLastModified }});
 };
 
 let temp = (p, res) => {
- res.sendFile(p, { root: __dirname + '/temp'});
+ res.sendFile(p, { root: __dirname + '/temp' });
 };
 
-let handler = (req, res) => {
-	console.log(req.path);
+let handler = (req, res) => {	
 	checkBot(req, () => {
 		page('index.html', res);
 	}, () => {
@@ -40,6 +40,6 @@ app.get('/search/:txtSearch', handler);
 app.get('/my-video', handler);
 app.get('/:id/:title', handler);
 
-app.listen(3001, function () {
+app.listen(3000, function () {
   console.log('clipv2web listening on port 80!');
 });

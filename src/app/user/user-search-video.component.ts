@@ -91,7 +91,6 @@ export class UserSearchVideoComponent implements AfterViewInit {
             this.item.youtubeid = m[1];
             this.item.image = `http://i.ytimg.com/vi/${this.item.youtubeid}/0.jpg`; 
             this.item.link = `https://www.youtube.com/embed/${this.item.youtubeid}`;
-            this.item.creatorid = this.userService.currentUser._id;
             this.item.creator = this.userService.currentUser.name;
             var self:any = this;
             this.videoService.getYoutube(this.item.youtubeid).subscribe(
@@ -104,7 +103,6 @@ export class UserSearchVideoComponent implements AfterViewInit {
           }          
         }else if(this.link.indexOf('facebook.com') != -1){
           //https://www.facebook.com/facebook/videos/10153231379946729/
-          this.item.creatorid = this.userService.currentUser._id;
           this.item.creator = this.userService.currentUser.name;
           this.item.link = this.link;
           let m = this.link.match(/\/videos\/([^\?\/]+)/);
@@ -135,17 +133,17 @@ export class UserSearchVideoComponent implements AfterViewInit {
 
   save(){
     if(!this.item || !this.item.link || !this.item.image || !this.item.title || !this.item.rawtitle || !this.item.creator || (!this.item.facebookid && !this.item.youtubeid)){
-      return this.eventService.emit({com: 'snack-bar', msg: 'Có lỗi trong quá trình xử lý'});
+      return this.eventService.emit({com: 'snack-bar', msg: 'Thông tin clip không đầy đủ'});
     }
     this.videoService.addVideo(this.item).subscribe(
      (v: any) => { 
+       console.log(v);
         if(v.length > 0){
           this.added.emit(v[0]);
-          this.eventService.emit({com: 'snack-bar', msg: 'Insert done'}); 
         }else{
-          this.eventService.emit({com: 'snack-bar', msg: 'Insert failed'}); 
+          this.eventService.emit({com: 'snack-bar', msg: 'Video này đã được upload bởi người khác rồi'}); 
         }
      },
-     error =>  this.eventService.emit({com: 'snack-bar', msg: 'Có lỗi trong quá trình xử lý'}));
+     error => {console.log(error); this.eventService.emit({com: 'snack-bar', msg: 'Có lỗi trong quá trình xử lý'})});
   }
 }

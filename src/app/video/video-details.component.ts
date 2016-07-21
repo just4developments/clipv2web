@@ -28,11 +28,11 @@ declare const location: any;
               &nbsp;14p40"&nbsp;&nbsp;
             </div>
             <div class="mdl-cell mdl-cell--4-col mdl-cell--3-col-tablet mdl-cell--4-col-phone mdl-cell--top facebook-share" align="right">
-              <button id="btnFavorite" class="mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect mdl-button--primary" (click)="favorite($event)" title="{{isFavorite ? 'Xóa khỏi': 'Thêm vào'}} danh sách yêu thích">
+              <button id="btnFavorite" class="mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect mdl-button--accent" (click)="favorite($event)" title="{{isFavorite ? 'Xóa khỏi': 'Thêm vào'}} danh sách yêu thích">
                 <i class="material-icons" *ngIf="!isFavorite">favorite_border</i>
                 <i class="material-icons" *ngIf="isFavorite" title="">favorite</i>
               </button>
-              <facebook-share [title]="item.title" [description]=[item.title] [picture]="item.image" [caption]="abc"></facebook-share>              
+              <facebook-share [title]="item.title" [description]=[item.title] [picture]="item.image" [caption]="'ClipVNet.com'"></facebook-share>              
             </div>
           </div>
         </div>
@@ -48,7 +48,7 @@ declare const location: any;
         <facebook-comment [link]="locationHref"></facebook-comment>
       </div>
     `,
-    styles: ['.mdl-card__supporting-text, .mdl-card__supporting-text i {font-size: 12px}'],    
+    styles: ['.mdl-card__supporting-text, .mdl-card__supporting-text i {font-size: 12px}', '#btnFavorite i {zoom: 2}'],    
     directives: [GoTop, FacebookCommentComponent, FacebookShareComponent, ROUTER_DIRECTIVES, FacebookPlayerComponent, YoutubePlayerComponent, Html5PlayerComponent]
 })
 export class VideoDetailsComponent implements OnChanges, OnInit, OnDestroy { 

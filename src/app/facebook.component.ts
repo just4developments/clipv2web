@@ -230,7 +230,7 @@ export class FacebookLikeComponent extends AbsFacebookComponent {
 @Component({
     selector: 'facebook-share',
     template: `
-      <button class="mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect mdl-button--primary" (click)="share($event)">
+      <button class="mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect mdl-button--primary" (click)="share($event)" title="Chia sẻ facebook">
         <i class="material-icons">share</i>
       </button>
     `,
@@ -245,6 +245,7 @@ export class FacebookShareComponent {
   share(event:any){
     let link = location.href;
     FB.ui({
+      display: 'popup',
       method: 'share_open_graph',
       action_type: 'og.shares',
       action_properties: JSON.stringify({

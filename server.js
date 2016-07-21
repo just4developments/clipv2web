@@ -40,6 +40,6 @@ app.get('/search/:txtSearch', handler);
 app.get('/my-video', handler);
 app.get('/:id/:title', handler);
 
-app.listen(3000, function () {
+app.listen(80, function () {
   console.log('clipv2web listening on port 80!');
 });

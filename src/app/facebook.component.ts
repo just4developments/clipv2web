@@ -147,7 +147,7 @@ export class FacebookLoginComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     FB.init({ 
-      appId: 'development' === ENV ? '850835344955953' : '291510107860506',
+      appId: 'development' === ENV ? '850835344955953' : '1565004733775516',
       status: true, 
       cookie: true, 
       xfbml: true,

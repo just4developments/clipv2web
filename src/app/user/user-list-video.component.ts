@@ -25,8 +25,9 @@ import { GoTop } from '../video.directive';
                 {{item.updateat | date: 'dd/MM/yyyy'}}
               </span>
             </a>
-            <i class="material-icons done" *ngIf="item.status" title="Đã được duyệt">beenhere</i>
-            <a class="mdl-list__item-secondary-action" href="javascript:void(0)" (click)="remove(item)" *ngIf="!item.status" title="Đang chờ duyệt"><i class="material-icons">remove_circle</i></a>
+            <i class="material-icons done" *ngIf="item.status === 1" title="Đã được duyệt">beenhere</i>
+            <i class="material-icons cancel" *ngIf="item.status === -1" title="Admin đã từ chối đăng video của bạn">report</i>
+            <a class="mdl-list__item-secondary-action" href="javascript:void(0)" (click)="remove(item)" *ngIf="item.status === 0" title="Đang chờ duyệt"><i class="material-icons">remove_circle</i></a>
           </li>          
         </ul>
         <div class="mdl-card__supporting-text" *ngIf="!videos || videos.length === 0">
@@ -34,7 +35,7 @@ import { GoTop } from '../video.directive';
         </div>
       </div>
     `,
-    styles: ['.mdl-card {min-height: 0px}', '.done {color: #45C145;}'],
+    styles: ['.mdl-card {min-height: 0px}', '.done {color: #45C145;}', '.cancel { color: red; }'],
     directives: [ROUTER_DIRECTIVES, GoTop]
 })
 export class UserListVideoComponent implements OnInit, AfterViewInit, OnDestroy {

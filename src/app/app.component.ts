@@ -154,5 +154,3 @@ export class App implements AfterViewInit, OnInit, OnDestroy {
     });
   }
 }
-
-

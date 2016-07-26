@@ -147,7 +147,7 @@ export class FacebookLoginComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     FB.init({ 
-      appId: 'development' === ENV ? '850835344955953' : '1565004733775516',
+      appId: 'development' === ENV ? '850835344955953' : '291510107860506',
       status: true, 
       cookie: true, 
       xfbml: true,
@@ -246,15 +246,18 @@ export class FacebookShareComponent {
     let link = location.href;
     FB.ui({
       display: 'popup',
+      mobile_iframe: true,
       method: 'share_open_graph',
       action_type: 'og.shares',
       action_properties: JSON.stringify({
         object : {
          'og:url': link,
-         'og:title': this.title,
+         'og:title': this.title,         
          'og:description': this.description,
          'og:image': this.picture,
-         'og:caption': this.caption
+         'og:caption': this.caption,
+         'og:locale': 'vi_VN',
+         'og:site_name': 'ClipVNet'
         }
       })},(res: any) => {
         if (!res || res.error_message) console.log(res);

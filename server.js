@@ -25,7 +25,7 @@ let temp = (p, res) => {
  res.sendFile(p, { root: __dirname + '/temp' });
 };
 
-let handler = (req, res) => {	
+let handler = (req, res) => {		
 	checkBot(req, () => {
 		page('index.html', res);
 	}, () => {
@@ -39,6 +39,24 @@ app.get('/k/:keyword', handler);
 app.get('/search/:txtSearch', handler);
 app.get('/my-video', handler);
 app.get('/:id/:title', handler);
+// app.get('/:id/:title', (req, res) => {
+// 	if(req.headers['user-agent'].includes('facebookexternalhit')){
+// 		let content = `
+// 			<html>
+// 				<head>
+// 					<meta property="og:type" content="article" />					
+// 					<meta property="og:url" content="http://kenh14.vn/news-2016072523515093.chn" />
+// 					<meta property="og:title" content="17 tuổi, nữ sinh tài năng này đã sáng lập hội thảo Mô phỏng Liên Hợp Quốc cho các bạn trẻ Việt Nam" />
+// 					<meta property="og:description" content="17 tuổi, sáng lập hội thảo Mô phỏng Liên Hợp Quốc lớn nhất Việt Nam, đang thực tập tại Ernst&amp;Young, làm CTV cho một dự án của UNESCO. Đó chính là những thông tin cơ bản nhất về cô bạn thú vị này." />
+// 					<meta property="og:image" content="http://kenh14cdn.com/thumb_w/600/2016/img-0311-1469464784467-1416-0-2917-2912-crop-1469465362749.jpg" />
+// 				</head>
+// 			</html>
+// 		`;
+// 		res.send(content);
+// 	}else{
+// 		handler(req, res);
+// 	}
+// });
 
 app.listen(80, function () {
   console.log('clipv2web listening on port 80!');

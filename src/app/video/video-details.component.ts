@@ -37,11 +37,11 @@ declare var window: any;
               </button>              
               <facebook-share [title]="item.title" [description]=[item.title] [picture]="item.image" [caption]="'ClipVNet.com'"></facebook-share>
 
-              <button id="btnSpecial" class="mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect" [ngClass]="item.isSpecial ? 'mdl-button--accent' : ''" (click)="special($event)" title="{{item.isSpecial ? 'Đã thêm vào': 'Đã xóa khỏi'}} danh sách clip HOT">
+              <button id="btnSpecial" *ngIf="userService.isBoss()" class="mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect" [ngClass]="item.isSpecial ? 'mdl-button--accent' : ''" (click)="special($event)" title="{{item.isSpecial ? 'Đã thêm vào': 'Đã xóa khỏi'}} danh sách clip HOT">
                 <i class="material-icons" [hidden]="item.isSpecial">star_border</i>
                 <i class="material-icons" [hidden]="!item.isSpecial">star</i>
               </button>
-              <button id="btnRemove" class="mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect" [ngClass]="item.status === 1 ? 'mdl-button--accent' : ''" (click)="updateStatus($event)" title="{{item.status === 1 ? 'Video đã được hiển thị': (item.status === -1 ? 'Video đã bị ẩn' : 'Video chưa được duyệt')}}">
+              <button id="btnRemove" *ngIf="userService.isBoss()" class="mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect" [ngClass]="item.status === 1 ? 'mdl-button--accent' : ''" (click)="updateStatus($event)" title="{{item.status === 1 ? 'Video đã được hiển thị': (item.status === -1 ? 'Video đã bị ẩn' : 'Video chưa được duyệt')}}">
                 <i class="material-icons" [hidden]="item.status === -1">visibility</i>
                 <i class="material-icons" [hidden]="item.status === 1">visibility_off</i>
               </button>

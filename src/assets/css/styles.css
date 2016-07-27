@@ -136,9 +136,49 @@ facebook-like {
 .keywords {
   margin: 5px 0px;
 }
-.keywords a {
+.keywords div {
   margin: 0px 2px;
   zoom: 80%;
+}
+video-details .left {
+  padding: 6px;
+}
+video-details .mdl-card__supporting-text {
+  padding-top: 0px;
+  padding-bottom: 6px;
+}
+video-details .mdl-card__supporting-text, 
+video-details .left i.material-icons {
+  font-size: 12px;
+  position: relative;
+  top: 2px;
+}
+video-details .right i.material-icons {
+  font-size: 18px !important
+}
+video-details .keywords button { 
+  float: left;
+}
+video-details .keywords div.active {  
+  background-color: #E1574C;
+  color: white;
+  border: solid 1px #B0281E;
+}
+video-details .keywords div:not(.active):hover {  
+  background-color: #D5D5D5;
+}
+video-details .keywords div {
+  float: left;
+  padding: 0px 8px;
+  line-height: 20px;
+  height: auto;
+  margin: 1px 1px;
+  border: solid 1px #DFDFDF;
+  border-radius: 2px;
+  background-color: #efefef;
+  color: #5C5C5C;
+  font-size: 11px;
+  cursor: pointer;
 }
 .inner {
   margin: auto;

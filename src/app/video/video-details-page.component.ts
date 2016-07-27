@@ -21,25 +21,15 @@ import { VideoDetails, VideoService } from '../video.service';
 })
 export class VideoDetailsPageComponent implements OnInit { 
   item: VideoDetails;
-  sub: any;
-  keywords: Array<any>;
 
-  constructor(private route: ActivatedRoute, private videoService: VideoService){
-    this.keywords = this.videoService.getKeywords();
+  constructor(private route: ActivatedRoute, private videoService: VideoService){    
     this.route.data.subscribe((data: any) => {      
-      this.item = data.video;
-      for(let i in this.item.keywords){
-        for(let all of this.keywords){
-          if(this.item.keywords[i] === all._id){
-            this.item.keywords[i] = all;
-          }
-        } 
-      }
+      this.item = data.video;      
     });
   }
 
   ngOnInit(){
-
+    
   }
 
 

@@ -3,13 +3,12 @@ import { ROUTER_DIRECTIVES } from '@angular/router';
 import { SafeResourceUrl, DomSanitizationService } from '@angular/platform-browser';
 
 import { VideoCard } from '../video.service';
-import { GoTop } from '../video.directive';
 import { HowlongPipe } from '../filter.pipe';
 
 @Component({
     selector: 'video-card-item',
     template: `
-    <a [routerLink]="['/'+item._id+'/'+item.title0]" class="nothing" go-top>
+    <a [routerLink]="['/'+item._id+'/'+item.title0]" class="nothing">
       <div class="mdl-card__title">
          <h4 class="mdl-card__title-text main-color">{{item.title}}</h4>
       </div>      
@@ -32,7 +31,7 @@ import { HowlongPipe } from '../filter.pipe';
       '[class.mdl-cell--4-col-phone]': 'true'
     },
     pipes: [HowlongPipe],
-    directives: [GoTop, ROUTER_DIRECTIVES]
+    directives: [ROUTER_DIRECTIVES]
 })
 export class VideoCardItemComponent implements OnInit { 
   @Input() item: VideoCard;

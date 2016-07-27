@@ -22,6 +22,8 @@ export class VideoCard {
   viewcount: number;
   keywords: Array<any>;
   nowOnTime: string;
+  isSpecial: boolean;
+  status: number;
 }
 
 export class VideoDetails {
@@ -37,6 +39,8 @@ export class VideoDetails {
   viewcount: number;
   keywords: Array<any>;
   nowOnTime: string;
+  isSpecial: boolean;
+  status: number;
 }
 
 @Injectable()
@@ -45,7 +49,7 @@ export class VideoService {
 
 	constructor(private http: Http, private userService: UserService){
     this.http.get(Config.HOST + '/keywords')
-          .map((res) => { return res; } )
+          .map((res) => { return HashService.decrypt(res); } )
           .catch(this.handleError).subscribe((keywords: Array<any>) => {
           this.keywords = keywords;
         }, (err: any) => { console.error(err); });;
@@ -148,10 +152,28 @@ export class VideoService {
           .catch(this.handleError); 
   }
 
+  updateVideoKeyword(videoId: string, keywordId: string): Observable<Array<any>> {
+     return this.http.put(Config.HOST + '/video/' + videoId, {keywordid: keywordId}, new RequestOptions({ headers: new Headers({ 'Content-Type': 'application/json', 'me': this.userService.currentUser._id }) }))
+          .map((res:any) => { return HashService.decrypt(res); } )
+          .catch(this.handleError); 
+  }
+
   addFavorite(v: any): Observable<VideoCard[]> {
      return this.http.post(Config.HOST + '/favorite', v, new RequestOptions({ headers: new Headers({ 'Content-Type': 'application/json', 'me': this.userService.currentUser._id }) }))
           .map((res:any) => { return HashService.decrypt(res); } )
           .catch(this.handleError); 
+  }
+
+  updateSpecial(videoId:string, isSpecial:boolean): Observable<VideoCard[]> {
+     return this.http.put(Config.HOST + '/video/' + videoId, {isSpecial: isSpecial}, new RequestOptions({ headers: new Headers({ 'Content-Type': 'application/json'}) }))
+          .map((res:any) => { return HashService.decrypt(res); } )
+          .catch(this.handleError); 
+  }
+
+  updateVideoStatus(videoId:string, status:number){
+     return this.http.put(Config.HOST + '/video/' + videoId, {status: status}, new RequestOptions({ headers: new Headers({ 'Content-Type': 'application/json'}) }))
+          .map((res:any) => { return HashService.decrypt(res); } )
+          .catch(this.handleError);  
   }
 
   removeVideo(id: any): Observable<VideoCard[]> {

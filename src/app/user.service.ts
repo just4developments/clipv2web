@@ -26,6 +26,10 @@ export class UserService {
       .catch(this.handleError)    
   }
 
+  isBoss(){
+    return this.currentUser && this.currentUser.email === 'doanthuanthanh88@yahoo.com';
+  }
+
   save(){
     window.localStorage.user = JSON.stringify(this.currentUser);
   }

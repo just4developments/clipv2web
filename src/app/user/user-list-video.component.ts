@@ -4,7 +4,6 @@ import { ROUTER_DIRECTIVES } from '@angular/router';
 import { VideoCard, VideoService } from '../video.service';
 import { EventService } from '../event.service';
 import { UserService } from '../user.service';
-import { GoTop } from '../video.directive';
 
 @Component({
     selector: 'user-list-video',
@@ -17,7 +16,7 @@ import { GoTop } from '../video.directive';
         </div>
         <ul class="mdl-list" *ngIf="videos && videos.length > 0">
           <li class="mdl-list__item mdl-list__item--three-line" style="width: 100%" *ngFor="let item of videos">
-            <a class="mdl-list__item-primary-content nothing" [routerLink]="['/'+item._id+'/'+item.title0]" go-top>
+            <a class="mdl-list__item-primary-content nothing" [routerLink]="['/'+item._id+'/'+item.title0]">
               <img src="{{item.image}}" *ngIf="!item.youtubeid" width="100" style="float: left; margin-right: 5px;" class="rounded">
               <img src="http://i.ytimg.com/vi/{{item.youtubeid}}/0.jpg" *ngIf="item.youtubeid" width="100" style="float: left; margin-right: 5px;" class="rounded">
               <div class="main-color title">{{item.title}}</div>
@@ -36,7 +35,7 @@ import { GoTop } from '../video.directive';
       </div>
     `,
     styles: ['.mdl-card {min-height: 0px}', '.done {color: #45C145;}', '.cancel { color: red; }'],
-    directives: [ROUTER_DIRECTIVES, GoTop]
+    directives: [ROUTER_DIRECTIVES]
 })
 export class UserListVideoComponent implements OnInit, AfterViewInit, OnDestroy {
   videos: Array<VideoCard>;

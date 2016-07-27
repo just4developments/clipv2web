@@ -4,7 +4,6 @@ import { Title } from '@angular/platform-browser';
 
 import { EventService } from '../event.service';
 import { VideoCard, VideoService } from '../video.service';
-import { GoTop } from '../video.directive';
 import { VideoCardItemComponent } from './video-card-item.component'
 import { VideoCardLoadingComponent } from './video-card-loading.component'
 
@@ -18,7 +17,7 @@ declare var componentHandler: any;
           <video-card-loading [hidden]="!isLoading"></video-card-loading>
       </div>      
       <div *ngIf="isLastAutoScroll" align="center" class="isLastAutoScroll">
-        <button class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored" go-top [routerLink]="['/v/'+mode]" [queryParams]="{page: page+1}">
+        <button class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored" [routerLink]="['/v/'+mode]" [queryParams]="{page: page+1}">
           <i class="normal material-icons">hdr_weak</i>
           <i class="hover material-icons">hdr_strong</i>
         </button>
@@ -30,7 +29,7 @@ declare var componentHandler: any;
       'button:hover i.hover { display: block; }',
       'button:hover i.normal { display: none; }'
     ],
-    directives: [VideoCardItemComponent, VideoCardLoadingComponent, ROUTER_DIRECTIVES, GoTop]
+    directives: [VideoCardItemComponent, VideoCardLoadingComponent, ROUTER_DIRECTIVES]
 })
 export class VideoCardListComponent implements OnInit, OnDestroy, OnChanges, AfterViewInit { 
     isLoading: boolean = false;

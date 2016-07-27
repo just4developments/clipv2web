@@ -13,7 +13,8 @@ import { HowlongPipe } from '../filter.pipe';
          <h4 class="mdl-card__title-text main-color">{{item.title}}</h4>
       </div>      
       <div class="mdl-card__media">
-        <img [src]="url">
+        <img src="{{item.image}}"                                 *ngIf="!item.youtubeid">
+        <img src="http://i.ytimg.com/vi/{{item.youtubeid}}/mqdefault.jpg" *ngIf="item.youtubeid">
       </div>
       <div class="howlong" *ngIf="item.duration"><i class="material-icons dp48">alarm</i>{{item.duration | HowlongPipe}}</div>
       <div class="mdl-card__supporting-text icon-des mdl-grid des-color">

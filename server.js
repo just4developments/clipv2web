@@ -4,7 +4,7 @@ let app = express();
 var compression = require('compression');
 var unirest = require('unirest');
 
-const URL = 'http://localhost:8000'; // 'http://clipvnet.com:8000';
+const URL = 'http://clipvnet.com:8000';
 
 let checkBot = (req, fcTrue, fcFalse) => {
 	// let agent = req.headers['user-agent'];
@@ -42,7 +42,7 @@ app.get('/sitemap.xml', (req, res) => {
 	var appendContent = (path, fcDone) => {
 		var cnt = '';
 	  unirest.get(`${URL}${path}`)
-	  .headers({'decrypt': null})
+	  .headers({'decrypt': '1'})
 	  .query({
 		  page: 1,
 		  rows: 12

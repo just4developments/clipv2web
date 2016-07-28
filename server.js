@@ -52,7 +52,7 @@ app.get('/sitemap.xml', (req, res) => {
 		  	cnt += `
 		  		<url>
 		        <loc>${HOST}/${r._id}/${r.title0}</loc>
-		        <changefreq>daily</changefreq>
+		        <changefreq>never</changefreq>
 		      </url>
 	      `;      
 		  }		  
@@ -66,17 +66,17 @@ app.get('/sitemap.xml', (req, res) => {
 				<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 			    <url>
 			      <loc>${HOST}</loc>
-			      <changefreq>daily</changefreq>
+			      <changefreq>always</changefreq>
 			    </url>
 			    ${cnt0}
 			    <url>
 			      <loc>${HOST}/v/most</loc>
-			      <changefreq>daily</changefreq>
+			      <changefreq>monthly</changefreq>
 			    </url>
 			    ${cnt1}
 			    <url>
 			      <loc>${HOST}/v/hot</loc>
-			      <changefreq>daily</changefreq>
+			      <changefreq>monthly</changefreq>
 			    </url>
 			    ${cnt2}
 			  </urlset>`

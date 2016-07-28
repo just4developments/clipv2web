@@ -2,6 +2,9 @@ let express = require('express');
 let fs = require('fs');
 let app = express();
 var compression = require('compression');
+var unirest = require('unirest');
+
+const URL = 'http://localhost:8000'; // 'http://clipvnet.com:8000';
 
 let checkBot = (req, fcTrue, fcFalse) => {
 	// let agent = req.headers['user-agent'];
@@ -12,6 +15,7 @@ let checkBot = (req, fcTrue, fcFalse) => {
 	fcFalse();
 }
 
+app.use(require('prerender-node').set('prerenderToken', 'QQkE5hbB6CfQ0M4B2nzk'));
 app.use(compression({ threshold: 0 }));
 app.use(express.static(__dirname + '/dist', {index: false}));
 
@@ -33,6 +37,54 @@ let handler = (req, res) => {
 	});
 }
 
+app.get('/sitemap.xml', (req, res) => {
+	var HOST = URL.replace(/:8000/, '');
+	var appendContent = (path, fcDone) => {
+		var cnt = '';
+	  unirest.get(`${URL}${path}`)
+	  .headers({'decrypt': null})
+	  .query({
+		  page: 1,
+		  rows: 12
+		})
+		.end(function (res0) {
+		  for(var r of res0.body){	  	  
+		  	cnt += `
+		  		<url>
+		        <loc>${HOST}/${r._id}/${r.title0}</loc>
+		        <changefreq>daily</changefreq>
+		      </url>
+	      `;      
+		  }		  
+			fcDone(cnt);
+		});		
+	}
+	appendContent('/video/newest', (cnt0) => {
+		appendContent('/video/most', (cnt1) => {
+			appendContent('/video/hot', (cnt2) => {				
+				var cnt = `<?xml version="1.0" encoding="UTF-8"?>
+				<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+			    <url>
+			      <loc>${HOST}</loc>
+			      <changefreq>daily</changefreq>
+			    </url>
+			    ${cnt0}
+			    <url>
+			      <loc>${HOST}/v/most</loc>
+			      <changefreq>daily</changefreq>
+			    </url>
+			    ${cnt1}
+			    <url>
+			      <loc>${HOST}/v/hot</loc>
+			      <changefreq>daily</changefreq>
+			    </url>
+			    ${cnt2}
+			  </urlset>`
+			  res.type('xml').send(cnt);
+			});
+		});		
+	});
+});
 app.get('/', handler);
 app.get('/v/:mode', handler);
 app.get('/k/:keyword', handler);

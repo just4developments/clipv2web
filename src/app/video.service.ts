@@ -50,7 +50,8 @@ export class VideoService {
 	constructor(private http: Http, private userService: UserService){
     this.http.get(Config.HOST + '/keywords')
           .map((res) => { return HashService.decrypt(res); } )
-          .catch(this.handleError).subscribe((keywords: Array<any>) => {
+          .catch(this.handleError)
+          .subscribe((keywords: Array<any>) => {
           this.keywords = keywords;
         }, (err: any) => { console.error(err); });;
 	}
@@ -98,10 +99,6 @@ export class VideoService {
     return this.http.get(Config.HOST + '/video/search?txtSearch=' + txtSearch + '&page=' + meta.page + "&rows=" + meta.rows)
           .map((res:any) => { return this.fromNowOn(HashService.decrypt(res)); } )
           .catch(this.handleError);
-  }
-
-  getKeywords(){
-    return this.keywords;
   }
 
   getKeywordVideos(keyword: string, meta:any): Observable<VideoCard[]> {

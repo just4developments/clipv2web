@@ -90,7 +90,7 @@ declare var FB: any;
               </div>
             </div>
             <div class="keywords">
-              <a *ngFor="let k of keywords" style="float: left;" go-top class="mdl-button mdl-js-button" [routerLink]="['/k/'+k._id]">{{k.name}}</a>
+              <a *ngFor="let k of videoService.keywords" style="float: left;" go-top class="mdl-button mdl-js-button" [routerLink]="['/k/'+k._id]">{{k.name}}</a>
             </div>
             <div class="mdl-mega-footer--middle-section" style="clear: both;">
               <p class="mdl-typography--font-light">Satellite imagery: © 2014 Astrium, DigitalGlobe</p>
@@ -104,11 +104,10 @@ declare var FB: any;
 })
 export class App implements AfterViewInit, OnInit, OnDestroy {
   txtSearch: string;
-  keywords: Array<any>;
   gsub: any;
 
   constructor(private zone: NgZone, private videoService: VideoService, private eventService: EventService, private router: Router, private userService: UserService){
-    this.keywords = this.videoService.getKeywords();
+    
   }
 
   ngOnInit(){

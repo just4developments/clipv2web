@@ -57,7 +57,7 @@ declare var window: any;
           <div *ngFor="let k of item.keywords" (click)="goto(k)">{{k.name}}</div>
         </div>
         <div class="keywords" *ngIf="userService.isBoss()">
-          <div *ngFor="let k of keywords" class="{{hasExist(k._id) ? 'active' : ''}}" (click)="manageKeyword(k)">{{k.name}}</div>          
+          <div *ngFor="let k of videoService.keywords" class="{{hasExist(k._id) ? 'active' : ''}}" (click)="manageKeyword(k)">{{k.name}}</div>          
         </div>
         <hr style="clear: both"/>
         <facebook-comment [link]="locationHref"></facebook-comment>
@@ -73,7 +73,6 @@ export class VideoDetailsComponent implements OnChanges, OnInit, OnDestroy, Afte
   locationHref: string;
   gsub: any;
   isChecked: boolean= false;
-  keywords: Array<any>;
   container: any;
 
   constructor(private title: Title, private videoService: VideoService, private eventService: EventService, private userService: UserService, private router: Router){
@@ -91,9 +90,8 @@ export class VideoDetailsComponent implements OnChanges, OnInit, OnDestroy, Afte
   }
 
   applyKeyword(){
-    if(!this.keywords) this.keywords = this.videoService.getKeywords();    
     for(let i in this.item.keywords){
-      for(let all of this.keywords){
+      for(let all of this.videoService.keywords){
         if(this.item.keywords[i] instanceof Object) continue;
         if(this.item.keywords[i] === all._id){
           this.item.keywords[i] = all;

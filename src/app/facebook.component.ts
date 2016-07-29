@@ -245,23 +245,29 @@ export class FacebookShareComponent {
   share(event:any){
     let link = location.href;
     FB.ui({
+      method: 'share',
       display: 'popup',
-      mobile_iframe: true,
-      method: 'share_open_graph',
-      action_type: 'og.shares',
-      action_properties: JSON.stringify({
-        object : {
-         'og:url': link,
-         'og:title': this.title,         
-         'og:description': this.description,
-         'og:image': this.picture,
-         'og:caption': this.caption,
-         'og:locale': 'vi_VN',
-         'og:site_name': 'ClipVNet'
-        }
-      })},(res: any) => {
-        if (!res || res.error_message) console.log(res);
-      });
+      href: link
+    }, function(response){});
+    
+    // FB.ui({
+    //   display: 'popup',
+    //   mobile_iframe: true,
+    //   method: 'share_open_graph',
+    //   action_type: 'og.shares',
+    //   action_properties: JSON.stringify({
+    //     object : {
+    //      'og:url': link,
+    //      'og:title': this.title,         
+    //      'og:description': this.description,
+    //      'og:image': this.picture,
+    //      'og:caption': this.caption,
+    //      'og:locale': 'vi_VN',
+    //      'og:site_name': 'ClipVNet'
+    //     }
+    //   })},(res: any) => {
+    //     if (!res || res.error_message) console.log(res);
+    //   });
   }
 }
 

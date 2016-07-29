@@ -51,7 +51,7 @@ app.get('/sitemap.xml', (req, res) => {
 		  for(var r of res0.body){	  	  
 		  	cnt += `
 		  		<url>
-		        <loc>${HOST}/${r._id}/${r.title0}</loc>
+		        <loc>${HOST}/detail/${r._id}/${r.title0}</loc>
 		        <changefreq>never</changefreq>
 		      </url>
 	      `;      
@@ -70,13 +70,13 @@ app.get('/sitemap.xml', (req, res) => {
 			    </url>
 			    ${cnt0}
 			    <url>
-			      <loc>${HOST}/v/most</loc>
-			      <changefreq>monthly</changefreq>
+			      <loc>${HOST}/most</loc>
+			      <changefreq>daily</changefreq>
 			    </url>
 			    ${cnt1}
 			    <url>
-			      <loc>${HOST}/v/hot</loc>
-			      <changefreq>monthly</changefreq>
+			      <loc>${HOST}/hot</loc>
+			      <changefreq>daily</changefreq>
 			    </url>
 			    ${cnt2}
 			  </urlset>`

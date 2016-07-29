@@ -32,8 +32,7 @@ let metaConfig = new MetaConfig({
   //Defaults to false
   useTitleSuffix: true,
   defaults: {
-    title: 'Kênh tổng hợp các clip vui, hài hước',
-    titleSuffix: ' | ClipVNet'
+    title: 'Kênh tổng hợp các clip vui, hài hước'
   }
 });
 

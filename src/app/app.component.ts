@@ -42,9 +42,9 @@ declare var FB: any;
             <!-- Navigation -->
             <div class="android-navigation-container">
               <nav class="android-navigation mdl-navigation">
-                <a class="mdl-navigation__link mdl-typography--text-uppercase {{actived('/')}}" [routerLink]="['/']" go-top>Mới nhất</a>
-                <a class="mdl-navigation__link mdl-typography--text-uppercase {{actived('/v/most')}}" [routerLink]="['/v/most']" go-top>Xem nhiều nhất</a>
-                <a class="mdl-navigation__link mdl-typography--text-uppercase {{actived('/v/hot')}}" [routerLink]="['/v/hot']" go-top>Hot nhất</a>
+                <a class="mdl-navigation__link mdl-typography--text-uppercase" routerLinkActive="actived" [routerLinkActiveOptions]="{exact: true}" [routerLink]="['/']" go-top>Mới nhất</a>
+                <a class="mdl-navigation__link mdl-typography--text-uppercase" routerLinkActive="actived" [routerLink]="['/most']" go-top>Xem nhiều nhất</a>
+                <a class="mdl-navigation__link mdl-typography--text-uppercase" routerLinkActive="actived" [routerLink]="['/hot']" go-top>Hot nhất</a>
               </nav>
             </div>
             <a class="android-mobile-title mdl-layout-title" [routerLink]="['/']">
@@ -62,15 +62,15 @@ declare var FB: any;
 
         <div class="android-drawer mdl-layout__drawer" *md nav-left>
           <div *ngIf="userService.currentUser" class="user-infor">
-            <img src="http://graph.facebook.com/{{userService.currentUser.fbid}}/picture" class="avatar" width = "50"/>
+            <img src="http://graph.facebook.com/{{userService.currentUser.fbid}}/picture" class="avatar" width="50"/>
             <h6>{{userService.currentUser.name}}</h6>
           </div>
           <nav class="mdl-navigation">
-            <a class="mdl-navigation__link {{actived('/')}}" [routerLink]="['/']" go-top><i class="material-icons">whatshot</i> Mới nhất</a>
-            <a class="mdl-navigation__link {{actived('/v/most')}}" [routerLink]="['/v/most']" go-top><i class="material-icons">equalizer</i> Xem nhiều nhất</a>
-            <a class="mdl-navigation__link {{actived('/v/hot')}}" [routerLink]="['/v/hot']" go-top><i class="material-icons">star</i> Hot nhất</a>
+            <a class="mdl-navigation__link" routerLinkActive="actived" [routerLinkActiveOptions]="{exact: true}" [routerLink]="['/']" go-top><i class="material-icons">whatshot</i> Mới nhất</a>
+            <a class="mdl-navigation__link" routerLinkActive="actived" [routerLink]="['/most']" go-top><i class="material-icons">equalizer</i> Xem nhiều nhất</a>
+            <a class="mdl-navigation__link" routerLinkActive="actived" [routerLink]="['/hot']" go-top><i class="material-icons">star</i> Hot nhất</a>
             <div class="android-drawer-separator"></div>
-            <a class="mdl-navigation__link {{actived('/my-video')}}" [routerLink]="['/my-video']" go-top *ngIf="userService.currentUser"><i class="material-icons">sentiment_very_satisfied</i> Video của tôi</a>
+            <a class="mdl-navigation__link" routerLinkActive="actived" [routerLink]="['/my-video']" go-top *ngIf="userService.currentUser"><i class="material-icons">sentiment_very_satisfied</i> Video của tôi</a>
             <a class="mdl-navigation__link" href="javascript:void(0);" (click)="logout()" *ngIf="userService.currentUser"><i class="material-icons">power_settings_new</i> Logout</a>
           </nav>
           <facebook-login [type]="1" style="width: inherit;" *ngIf="!userService.currentUser"></facebook-login>
@@ -90,7 +90,7 @@ declare var FB: any;
               </div>
             </div>
             <div class="keywords">
-              <a *ngFor="let k of videoService.keywords" style="float: left;" go-top class="mdl-button mdl-js-button" [routerLink]="['/k/'+k._id]">{{k.name}}</a>
+              <a *ngFor="let k of videoService.keywords" style="float: left;" class="mdl-button mdl-js-button" [routerLink]="['/keyword', k._id, k.uname]" go-top>{{k.name}}</a>
             </div>
             <div class="mdl-mega-footer--middle-section" style="clear: both;">
               <p class="mdl-typography--font-light">Satellite imagery: © 2014 Astrium, DigitalGlobe</p>
@@ -133,10 +133,6 @@ export class App implements AfterViewInit, OnInit, OnDestroy {
 
   ngOnDestroy(){
     this.gsub.unsubscribe();
-  }
-
-  actived(path: string){
-    return this.router.url === path ? 'actived' : '';
   }
 
   ngAfterViewInit() {            

@@ -1,15 +1,15 @@
 import {Component, OnInit, Input, EventEmitter, Output, ElementRef, AfterViewInit, OnDestroy, OnChanges, SimpleChange, Renderer} from '@angular/core';
 import {ROUTER_DIRECTIVES, Router} from "@angular/router";
-import { SafeResourceUrl, DomSanitizationService } from '@angular/platform-browser';
+import {SafeResourceUrl, DomSanitizationService} from '@angular/platform-browser';
 import {EventService} from "./event.service";
 import {UserService} from "./user.service";
+import {Config} from './config';
 
 declare var FB:any;
 declare var document: any;
 declare var location: any;
 declare var window: any;
 declare var ENV: any;
-const FANPAGE:string = "https://www.facebook.com/clipvnet/";
 
 class AbsFacebookComponent implements OnInit, OnDestroy, AfterViewInit {
   gsub:any;
@@ -147,7 +147,7 @@ export class FacebookLoginComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     FB.init({ 
-      appId: 'development' === ENV ? '850835344955953' : '291510107860506',
+      appId: Config.FB_APP_ID,
       status: true, 
       cookie: true, 
       xfbml: true,
@@ -207,7 +207,7 @@ export class FacebookLoginComponent implements OnInit, OnDestroy {
 
 @Component({
     selector: 'facebook-page',
-    template: '<div class="fb-page" data-href="' + FANPAGE + '" data-tabs="timeline" data-height="70" data-small-header="false" data-adapt-container-width="true" data-hide-cover="true" data-show-facepile="false"><blockquote cite="' + FANPAGE + '" class="fb-xfbml-parse-ignore"><a href="' + FANPAGE + '">Clipvnet.com</a></blockquote></div>',
+    template: '<div class="fb-page" data-href="' + Config.FB_FANPAGE + '" data-tabs="timeline" data-height="70" data-small-header="false" data-adapt-container-width="true" data-hide-cover="true" data-show-facepile="false"><blockquote cite="' + Config.FB_FANPAGE + '" class="fb-xfbml-parse-ignore"><a href="' + Config.FB_FANPAGE + '">Clipvnet.com</a></blockquote></div>',
     directives: [ROUTER_DIRECTIVES]
 })
 export class FacebookPageComponent extends AbsFacebookComponent {
@@ -218,7 +218,7 @@ export class FacebookPageComponent extends AbsFacebookComponent {
 
 @Component({
     selector: 'facebook-like',
-    template: '<div class="fb-like" data-href="' + FANPAGE + '" data-layout="standard" data-action="like" data-size="small" data-show-faces="true" data-share="false"></div>',
+    template: '<div class="fb-like" data-href="' + Config.FB_FANPAGE + '" data-layout="standard" data-action="like" data-size="small" data-show-faces="true" data-share="false"></div>',
     directives: [ROUTER_DIRECTIVES]
 })
 export class FacebookLikeComponent extends AbsFacebookComponent {

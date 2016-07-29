@@ -1,6 +1,6 @@
 import { Component, Input, OnInit, OnChanges, SimpleChange, OnDestroy, AfterViewInit } from '@angular/core';
 import { ROUTER_DIRECTIVES, Router } from '@angular/router';
-import { Title } from '@angular/platform-browser';
+import { MetaService } from 'ng2-meta';
 
 import { VideoDetails, VideoService } from '../video.service';
 import { EventService } from '../event.service';
@@ -9,7 +9,7 @@ import { UserService } from '../user.service';
 import { GoTop } from '../video.directive';
 import { FacebookCommentComponent, FacebookShareComponent, FacebookPlayerComponent, YoutubePlayerComponent, Html5PlayerComponent } from '../facebook.component';
 
-declare const location: any;
+declare var location: any;
 declare var componentHandler: any;
 declare var window: any;
 
@@ -54,7 +54,7 @@ declare var window: any;
           <html5-player [link]="item.link" *ngIf="!item.youtubeid && !item.facebookid"></html5-player>          
         </div>
         <div class="keywords" *ngIf="!userService.isBoss()">
-          <div *ngFor="let k of item.keywords" (click)="goto(k)">{{k.name}}</div>
+          <div *ngFor="let k of item.keywords" [routerLink]="['/keyword', k._id, k.uname]">{{k.name}}</div>
         </div>
         <div class="keywords" *ngIf="userService.isBoss()">
           <div *ngFor="let k of videoService.keywords" class="{{hasExist(k._id) ? 'active' : ''}}" (click)="manageKeyword(k)">{{k.name}}</div>          
@@ -75,7 +75,7 @@ export class VideoDetailsComponent implements OnChanges, OnInit, OnDestroy, Afte
   isChecked: boolean= false;
   container: any;
 
-  constructor(private title: Title, private videoService: VideoService, private eventService: EventService, private userService: UserService, private router: Router){
+  constructor(private metaService: MetaService, private videoService: VideoService, private eventService: EventService, private userService: UserService, private router: Router){
     
   }
 
@@ -83,10 +83,6 @@ export class VideoDetailsComponent implements OnChanges, OnInit, OnDestroy, Afte
     return this.item.keywords.findIndex((e)=>{
       return e._id === kwid;
     }) !== -1;
-  }
-
-  goto(k:any){
-    this.router.navigateByUrl('/k/'+k._id);
   }
 
   applyKeyword(){
@@ -115,8 +111,7 @@ export class VideoDetailsComponent implements OnChanges, OnInit, OnDestroy, Afte
 
   ngAfterViewInit() {
     this.container = window.document.querySelector('[scroll-bottom]');
-    this.container.scrollTop = 48;
-    console.log('init');
+    this.container.scrollTop = 48;    
   }
 
   manageKeyword(kw){
@@ -181,11 +176,16 @@ export class VideoDetailsComponent implements OnChanges, OnInit, OnDestroy, Afte
 
   ngOnChanges(changes: {[propertyName: string]: SimpleChange}){
     this.locationHref = location.href;
-    this.title.setTitle(this.item.title);    
+    
+    this.metaService.setTitle(this.item.title);        
+    this.metaService.setTag('og:type', 'video.other');
+    this.metaService.setTag('og:url', location.href);
+    this.metaService.setTag('og:image',this.item.image);
+    this.metaService.setTag('video:writer', this.item.creator);    
+
     this.applyKeyword();
     this.checkFavorite();
     this.isChecked = false;
-    if(this.container) this.container.scrollTop = 48;
-    console.log('change', this.container);
+    if(this.container) this.container.scrollTop = 48;    
   }
 }

@@ -6,9 +6,9 @@ import { VideoCardListComponent, VideoPageComponent } from './';
 
 export const routes = { path: '', component: VideoPageComponent,
   children: [
-    { path: '', component: VideoCardListComponent },
-    { path: 'v/:mode', component: VideoCardListComponent },
-    { path: 'k/:keyword', component: VideoCardListComponent },
-    { path: 'search/:txtSearch', component: VideoCardListComponent }
+    { path: '',                    pathMatch: 'full', 				component: VideoCardListComponent },
+    { path: ':mode',             	 pathMatch: 'full', 				component: VideoCardListComponent },
+    { path: 'keyword/:id/:title',  pathMatch: 'full', 				component: VideoCardListComponent },
+    { path: 'search/:txtSearch',   pathMatch: 'full', 				component: VideoCardListComponent }
   ] 
 };

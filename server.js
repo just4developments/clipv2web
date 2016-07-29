@@ -15,11 +15,9 @@ let checkBot = (req, fcTrue, fcFalse) => {
 	fcFalse();
 }
 
-app.configure(function(){ 
-	app.use(require('prerender-node').set('prerenderToken', 'QQkE5hbB6CfQ0M4B2nzk'));
-	app.use(compression({ threshold: 0 }));
-	app.use(express.static(__dirname + '/dist', {index: false}));
-});
+app.use(require('prerender-node').set('prerenderToken', 'QQkE5hbB6CfQ0M4B2nzk'));
+app.use(compression({ threshold: 0 }));
+app.use(express.static(__dirname + '/dist', {index: false}));
 
 let indexLastModified = new Date(fs.statSync('./dist/index.html').mtime).toUTCString();
 
@@ -88,11 +86,11 @@ app.get('/sitemap.xml', (req, res) => {
 	});
 });
 app.get('/', handler);
-app.get('/v/:mode', handler);
-app.get('/k/:keyword', handler);
-app.get('/search/:txtSearch', handler);
 app.get('/my-video', handler);
-app.get('/:id/:title', handler);
+app.get('/detail/:id/:title', handler);
+app.get('/keyword/:keyword/:title', handler);
+app.get('/search/:txtSearch', handler);
+app.get('/:mode', handler);
 // app.get('/:id/:title', (req, res) => {
 // 	if(req.headers['user-agent'].includes('facebookexternalhit')){
 // 		let content = `

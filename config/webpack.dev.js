@@ -158,8 +158,8 @@ module.exports = webpackMerge(commonConfig, {
     crypto: 'empty',
     process: true,
     module: false,
-    clearImmediate: false,
-    setImmediate: false
+    clearImmediate: true,
+    setImmediate: true
   }
 
 });

@@ -18,7 +18,7 @@ declare const FB:any;
     selector: 'user-menu',
     template: `
       <li class="mdl-menu__item" disabled>{{user.name}}</li>
-      <li class="mdl-menu__item" (click)="goto('my-video')"><i class="material-icons">sentiment_very_satisfied</i> Video của tôi</li>
+      <li class="mdl-menu__item" [routerLink]="['/my-video']"><i class="material-icons">sentiment_very_satisfied</i> Video của tôi</li>
       <li class="mdl-menu__item" (click)="logout()"><i class="material-icons">power_settings_new</i> Logout</li>
     `,
     styles: ['i { position: relative; top: 6px;}'],
@@ -34,10 +34,6 @@ export class UserMenuComponent implements AfterViewInit {
 
   ngAfterViewInit() {      
     componentHandler.upgradeDom();
-  }
-
-  goto(path: string){
-    this.router.navigateByUrl(path);
   }
 
   logout(){

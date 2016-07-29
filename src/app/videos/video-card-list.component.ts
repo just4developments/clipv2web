@@ -1,9 +1,10 @@
 import { Component, Input, OnInit, OnDestroy, OnChanges, SimpleChange, ComponentResolver, ViewContainerRef, ComponentFactory, ViewChild, ComponentRef, AfterViewInit } from '@angular/core';
 import { ActivatedRoute, Router, ROUTER_DIRECTIVES } from '@angular/router';
-import { Title } from '@angular/platform-browser';
+import { MetaService } from 'ng2-meta';
 
 import { EventService } from '../event.service';
 import { VideoCard, VideoService } from '../video.service';
+import { GoTop } from '../video.directive';
 import { VideoCardItemComponent } from './video-card-item.component'
 import { VideoCardLoadingComponent } from './video-card-loading.component'
 
@@ -17,7 +18,7 @@ declare var componentHandler: any;
           <video-card-loading [hidden]="!isLoading"></video-card-loading>
       </div>      
       <div *ngIf="isLastAutoScroll" align="center" class="isLastAutoScroll">
-        <button class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored" [routerLink]="['/v/'+mode]" [queryParams]="{page: page+1}">
+        <button class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored" [routerLink]="['/', mode]" [queryParams]="{page: page+1}" go-top>
           <i class="normal material-icons">hdr_weak</i>
           <i class="hover material-icons">hdr_strong</i>
         </button>
@@ -29,7 +30,7 @@ declare var componentHandler: any;
       'button:hover i.hover { display: block; }',
       'button:hover i.normal { display: none; }'
     ],
-    directives: [VideoCardItemComponent, VideoCardLoadingComponent, ROUTER_DIRECTIVES]
+    directives: [VideoCardItemComponent, VideoCardLoadingComponent, ROUTER_DIRECTIVES, GoTop]
 })
 export class VideoCardListComponent implements OnInit, OnDestroy, OnChanges, AfterViewInit { 
     isLoading: boolean = false;
@@ -47,7 +48,7 @@ export class VideoCardListComponent implements OnInit, OnDestroy, OnChanges, Aft
     @ViewChild('viewContainer', {read: ViewContainerRef}) 
     viewContainer:any;
 
-    constructor(private router: Router, private route: ActivatedRoute, private title: Title, private videoService: VideoService, private eventService: EventService, private cmpResolver: ComponentResolver){
+    constructor(private metaService: MetaService, private router: Router, private route: ActivatedRoute, private videoService: VideoService, private eventService: EventService, private cmpResolver: ComponentResolver){
       
     }
 
@@ -55,8 +56,7 @@ export class VideoCardListComponent implements OnInit, OnDestroy, OnChanges, Aft
       componentHandler.upgradeDom();
     }
 
-    ngOnChanges(changes: {[propertyName: string]: SimpleChange}){ 
-      
+    ngOnChanges(changes: {[propertyName: string]: SimpleChange}){       
       this.nextPage(this, () => {
         this.eventService.emit({com: 'video-card-list', action: 'loaded'});
       });
@@ -79,25 +79,26 @@ export class VideoCardListComponent implements OnInit, OnDestroy, OnChanges, Aft
       });
       this.sub = this.route.params.subscribe((params: any) => {
         var txtSearch: string = params['txtSearch'];      
-        var keyword: string =  params['keyword'];
+        var keywordId: string =  params['id'];        
+        var title: string;
         if(txtSearch){
           this.mode = 'search';
           this.query.txtSearch = txtSearch;
-          this.title.setTitle(txtSearch + '***');
-        }else if(keyword){
+          title = txtSearch + '***';
+        }else if(keywordId){
           this.mode = 'keyword';
-          this.query.keyword = keyword;
-          this.title.setTitle(keyword);
-        }else {
-          this.mode = params['mode'] || 'newest';
+          this.query.keyword = keywordId;
+          var kwidx = this.videoService.keywords.findIndex((e) =>{ return e._id === keywordId; });
+          title = kwidx < 0 ? keywordId : this.videoService.keywords[kwidx].name;
+        }else {          
+          this.mode = params['mode'] || 'newest';          
           if(this.mode === 'most'){
-            this.title.setTitle('Xem nhiều nhất');
+            title = 'Clip xem nhiều nhất';
           }else if(this.mode === 'hot'){
-            this.title.setTitle('Clip HOT nhất');
-          }else {
-            this.title.setTitle('ClipVNet - kênh video giải trí');
+            title = 'Clip HOT nhất';            
           }
         }
+        if(title) setTimeout(() => { this.metaService.setTitle(title); });
         this.init();
       });
       this.qsub = this.router.routerState.queryParams.subscribe((params:any) => {

@@ -5,6 +5,8 @@ export * from './app.routes';
 
 import { AppState } from './app.service';
 import { ResponsiveState, ResponsiveConfig, ResponsiveConfigInterface } from 'responsive-directives-angular2';
+import { provide } from '@angular/core';
+import { MetaConfig, MetaService } from 'ng2-meta';
 
 import { LocationStrategy, PathLocationStrategy } from '@angular/common';
 import { Title } from '@angular/platform-browser';
@@ -25,6 +27,17 @@ let config: ResponsiveConfigInterface = {
     debounceTime: 100 // allow to debounce checking timer
 };
 
+let metaConfig = new MetaConfig({
+  //Append a title suffix such as a site name to all titles
+  //Defaults to false
+  useTitleSuffix: true,
+  defaults: {
+    title: 'Kênh tổng hợp các clip vui, hài hước',
+    titleSuffix: ' | ClipVNet'
+  }
+});
+
+
 // Application wide providers
 export const APP_PROVIDERS = [
   AppState,
@@ -33,5 +46,6 @@ export const APP_PROVIDERS = [
       useFactory: () => new ResponsiveConfig(config)
   },
   ResponsiveState,
-  Title, HTTP_PROVIDERS, EventService, VideoService, UserService, { provide: LocationStrategy, useClass: PathLocationStrategy }
+  Title, provide('meta.config', {useValue: metaConfig}), 
+  MetaService, EventService, VideoService, UserService
 ];

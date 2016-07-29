@@ -1,5 +1,7 @@
 import { WebpackAsyncRoute } from '@angularclass/webpack-toolkit';
 import { RouterConfig } from '@angular/router';
+import { MetaService } from 'ng2-meta';
+
 import { NoContent } from './no-content';
 
 import { VideoDetailsPageComponent } from './video';
@@ -9,24 +11,32 @@ import { VideoService } from './video.service';
 import { UserVideoPageComponent } from './user';
 
 import { VideoResolver } from './app.resolver';
+import { routes as vroutes } from './videos';
 
-export const routes: RouterConfig = [
-  { path: 'my-video', component: UserVideoPageComponent },
-  { path: '', component: 'VideoPageComponent', 
-    canActivate: [ WebpackAsyncRoute ],
-    children: [
-      { path: '', component: 'VideoCardListComponent' },
-      { path: 'v/:mode', component: 'VideoCardListComponent' },
-      { path: 'k/:keyword', component: 'VideoCardListComponent' },
-      { path: 'search/:txtSearch', component: 'VideoCardListComponent' }
-    ] 
-  },    
-  { path: ':id/:title', component: 'VideoDetailsPageComponent', 
+export const routes: RouterConfig = [    
+  { path: 'my-video',                pathMatch: 'full', component: UserVideoPageComponent },
+  { path: 'detail/:id/:title',              pathMatch: 'full', component: 'VideoDetailsPageComponent', 
     resolve: {
       video: VideoResolver
     } 
-  },  
-  { path: '**',    component: NoContent },
+  }, 
+  { path: '', component: 'VideoPageComponent',
+    canActivate: [ WebpackAsyncRoute ],
+    children: [
+      { path: '',                    pathMatch: 'full',         component: 'VideoCardListComponent' },
+      { path: ':mode',               pathMatch: 'full',         component: 'VideoCardListComponent' },
+      { path: 'keyword/:id/:title',  pathMatch: 'full',         component: 'VideoCardListComponent' },
+      { path: 'search/:txtSearch',   pathMatch: 'full',         component: 'VideoCardListComponent' }
+    ] 
+  },
+  { path: '**',                                         component: NoContent,
+    data: {
+      meta: {
+        title: 'Page not found',
+        description: 'No content'
+      }
+    } 
+  }
 ];
 
 // Async load a component using Webpack's require with es6-promise-loader and webpack `require`
@@ -47,6 +57,7 @@ export const asyncRoutes: AsyncRoutes = {
 export const prefetchRouteCallbacks: Array<IdleCallbacks> = [
   asyncRoutes['VideoDetailsPageComponent'],
   asyncRoutes['VideoPageComponent'],
+  asyncRoutes['VideoCardListComponent']
    // es6-promise-loader returns a function
 ];
 

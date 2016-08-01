@@ -1,14 +1,13 @@
 import {Component, OnInit, Input, EventEmitter, Output, ElementRef, AfterViewInit, OnDestroy, OnChanges, SimpleChange, Renderer} from '@angular/core';
 import {ROUTER_DIRECTIVES, Router} from "@angular/router";
 import {SafeResourceUrl, DomSanitizationService} from '@angular/platform-browser';
+import {getDOM, DomAdapter} from '@angular/platform-browser/src/dom/dom_adapter';
 import {EventService} from "./event.service";
 import {UserService} from "./user.service";
+import {LocalStorage} from "./localstorage.service";
 import {Config} from './config';
 
 declare var FB:any;
-declare var document: any;
-declare var location: any;
-declare var window: any;
 declare var ENV: any;
 
 class AbsFacebookComponent implements OnInit, OnDestroy, AfterViewInit {
@@ -134,7 +133,7 @@ export class FacebookLoginComponent implements OnInit, OnDestroy {
   gsub:any;
   @Input() type: number = 0;
 
-  constructor(private userService: UserService, private eventService: EventService) {    
+  constructor(private localStorage: LocalStorage, private userService: UserService, private eventService: EventService) {    
     
   }
 
@@ -177,9 +176,8 @@ export class FacebookLoginComponent implements OnInit, OnDestroy {
 
   getInfor(self: FacebookLoginComponent, resp: any){  
     if(resp.status === 'connected'){
-      if(window.localStorage.user){
-        return self.eventService.emit({com: 'facebook', action: 'login', data: JSON.parse(window.localStorage.user)});
-      }
+      var user: any = self.localStorage.getObject('user');
+      if(user) return self.eventService.emit({com: 'facebook', action: 'login', data: user});
       FB.api('/me', {
         fields: ['email','name','age_range']
       }, function(res: any) {       
@@ -241,13 +239,13 @@ export class FacebookShareComponent {
   @Input() caption: string;
   @Input() picture: string;
   @Input() description: string;
+  document: DomAdapter = getDOM();
 
   share(event:any){
-    let link = location.href;
     FB.ui({
       method: 'share',
       display: 'popup',
-      href: link
+      href: this.document.getLocation().href
     }, function(response){});
     
     // FB.ui({
@@ -257,7 +255,7 @@ export class FacebookShareComponent {
     //   action_type: 'og.shares',
     //   action_properties: JSON.stringify({
     //     object : {
-    //      'og:url': link,
+    //      'og:url': this.document.getLocation().href,
     //      'og:title': this.title,         
     //      'og:description': this.description,
     //      'og:image': this.picture,

@@ -6,6 +6,7 @@ import { VideoRelationListComponent } from './video-relation-list.component';
 import { FacebookLikeComponent } from '../facebook.component';
 import { UserFavoriteVideoComponent } from '../user/user-favorite-video.component'; 
 import { EventService } from '../event.service';
+import { UserService } from '../user.service';
 
 @Component({
     selector: 'video-page',
@@ -17,13 +18,9 @@ import { EventService } from '../event.service';
         <div                class="mdl-cell mdl-cell--4-col mdl-cell--8-col-tablet mdl-cell--4-col-phone mdl-cell--top">
           <facebook-like *xl class="mdl-card"></facebook-like>
           <br/>
-          <br/>
           <div class="fixed-col">
-            <user-favorite-video [rows]="3"></user-favorite-video>
-            <br/>
-            <br/>
+            <user-favorite-video [rows]="3" *ngIf="userService.currentUser"></user-favorite-video>            
             <video-relation-list [mode]="'most'" [page]="1" [rows]="8"></video-relation-list>
-            <br/>
             <br/>
             <video-relation-list [mode]="'hot'" [page]="1" [rows]="8"></video-relation-list>
           </div>
@@ -34,7 +31,7 @@ import { EventService } from '../event.service';
 })
 export class VideoPageComponent implements OnInit, OnDestroy { 
 
-  constructor(private eventService: EventService){
+  constructor(private eventService: EventService, private userService: UserService){
     
   }
 

@@ -46,6 +46,7 @@ export class VideoDetails {
 @Injectable()
 export class VideoService {
   keywords: Array<any>;
+  componentHandler: any;
 
 	constructor(private http: Http, private userService: UserService){
     this.http.get(Config.HOST + '/keywords')
@@ -56,37 +57,8 @@ export class VideoService {
         }, (err: any) => { console.error(err); });;
 	}
 
-  fromNowOn(v:any){
-    if(!v) return v;
-    var now = new Date();    
-    let handleVideo = (v: any) => {
-      var t0 = (now.getTime() - new Date(v.updateat).getTime());
-      var str = '';
-      var t = Math.floor(t0/1000/60/60/24);
-      if(t > 0) str = t + ' ngày';
-      else {
-        t = Math.floor(t0/1000/60/60);
-        if(t > 0) str = t + ' giờ';
-        else {
-          t = Math.floor(t0/1000/60);
-          if(t > 0) str = t + ' phút';
-          else {
-            t = Math.floor(t0/1000);
-            if(t > 0) str = t + ' giây';
-          }
-        }
-      }      
-      v.nowOnTime = str + ' trước';
-      return v;
-    };
-    if(v instanceof Array){
-      for(var i in v){
-        v[i] = handleVideo(v[i]);
-      }
-    }else{
-      v = handleVideo(v);
-    }
-    return v;
+  upgradeDom(){
+    if(this.componentHandler) this.componentHandler.upgradeDom();
   }
 
   getYoutube(id: string): Observable<VideoCard[]> {
@@ -189,6 +161,39 @@ export class VideoService {
     return this.http.get(Config.HOST + '/myvideo', new RequestOptions({ headers: new Headers({ 'me': this.userService.currentUser._id }) }))
           .map((res:any) => { return HashService.decrypt(res); } )
           .catch(this.handleError); 
+  }
+
+  private fromNowOn(v:any){
+    if(!v) return v;
+    var now = new Date();    
+    let handleVideo = (v: any) => {
+      var t0 = (now.getTime() - new Date(v.updateat).getTime());
+      var str = '';
+      var t = Math.floor(t0/1000/60/60/24);
+      if(t > 0) str = t + ' ngày';
+      else {
+        t = Math.floor(t0/1000/60/60);
+        if(t > 0) str = t + ' giờ';
+        else {
+          t = Math.floor(t0/1000/60);
+          if(t > 0) str = t + ' phút';
+          else {
+            t = Math.floor(t0/1000);
+            if(t > 0) str = t + ' giây';
+          }
+        }
+      }      
+      v.nowOnTime = str + ' trước';
+      return v;
+    };
+    if(v instanceof Array){
+      for(var i in v){
+        v[i] = handleVideo(v[i]);
+      }
+    }else{
+      v = handleVideo(v);
+    }
+    return v;
   }
   
   private handleError (error: any) {

@@ -1,9 +1,7 @@
-import { Input, OnInit, OnDestroy, Directive, Output, EventEmitter, ElementRef, HostListener, AfterViewInit } from '@angular/core';
+import { OnInit, OnDestroy, Directive, Output, EventEmitter, ElementRef, HostListener, AfterViewInit } from '@angular/core';
+import { getDOM, DomAdapter } from '@angular/platform-browser/src/dom/dom_adapter';
 
 import { EventService } from './event.service';
-
-declare var window: any;
-declare var componentHandler: any;
 
 @Directive({
   selector: '[scroll-bottom]'
@@ -14,6 +12,7 @@ export class MainScrollDirective implements OnInit, OnDestroy {
   isLoadedData: boolean;
   gsub: any;
   m: any;
+  document: DomAdapter = getDOM();
  
   constructor(private eventService: EventService, private e: ElementRef) {
     
@@ -40,7 +39,7 @@ export class MainScrollDirective implements OnInit, OnDestroy {
   onScroll(event: any) {
     if(!this.isLoadedData) return false;  
     
-    var m:any = window.document.querySelector('#mainContent0');
+    var m:any = this.document.query('#mainContent0');
     if(!m) return this.isLoadedData = undefined;
   	if(this.e.nativeElement.scrollTop + this.e.nativeElement.offsetHeight >= m.offsetHeight){
       this.isLoadedData = false;
@@ -82,13 +81,14 @@ export class SelectWhenFocusDirective {
 })    
 export class GoTop implements AfterViewInit {
   container: any;
+  document: DomAdapter = getDOM();
 
   constructor(){
     
   }
 
   ngAfterViewInit() {
-    this.container = window.document.querySelector('[scroll-bottom]');
+    this.container = this.document.query('[scroll-bottom]');
   }
 
   @HostListener('click', ['$event']) 
@@ -106,6 +106,7 @@ export class GoTop implements AfterViewInit {
 })    
 export class NavLeft {
   container: any;
+  document: DomAdapter = getDOM();
 
   constructor(private e: ElementRef){
     
@@ -114,18 +115,8 @@ export class NavLeft {
   @HostListener('click', ['$event']) 
   onClick(event: any){
     if(event.which === 1){
-      window.document.querySelector('.mdl-layout__obfuscator').classList.remove('is-visible');
+      this.document.query('.mdl-layout__obfuscator').classList.remove('is-visible');
       this.e.nativeElement.classList.remove('is-visible');
     }
-  }
-}
-
-@Directive({
-    selector: '[mdl]'
-})    
-export class MDL implements AfterViewInit {
-	
-  ngAfterViewInit() {
-    componentHandler.upgradeAllRegistered();
   }
 }

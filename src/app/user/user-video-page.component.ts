@@ -37,7 +37,8 @@ export class UserVideoPageComponent implements OnInit, OnDestroy {
   }
 
   loadMyVideo(){
-    if(!this.userService.currentUser) return;    
+    if(!this.userService.currentUser || this.isLoaded) return;    
+    this.isLoaded = true;
     this.myfavories = this.userService.currentUser.favorites;
     this.videoService.getMyVideo().subscribe(
                  videos => { this.myvideos = videos; },

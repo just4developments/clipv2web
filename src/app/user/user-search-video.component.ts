@@ -8,7 +8,6 @@ import { SelectWhenFocusDirective } from '../video.directive';
 import { FacebookPlayerComponent, Html5PlayerComponent, YoutubePlayerComponent } from '../facebook.component';
 import { GoTop } from '../video.directive';
 
-declare var componentHandler: any;
 declare var FB:any;
 
 @Component({
@@ -60,7 +59,7 @@ export class UserSearchVideoComponent implements AfterViewInit {
   }
 
   ngAfterViewInit() {
-    componentHandler.upgradeDom();
+    this.videoService.upgradeDom();
   }
 
   getFbDuration(seconds:number){    

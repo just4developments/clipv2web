@@ -5,14 +5,13 @@ import 'rxjs/Rx';
 
 import { Config } from './config';
 import { HashService } from './hash.service';
-
-declare var window: any;
+import { LocalStorage } from './localstorage.service';
 
 @Injectable()
 export class UserService {
 	public currentUser: any;
 
-  constructor(private http: Http){
+  constructor(private localStorage: LocalStorage, private http: Http){
 
 	}
 
@@ -31,12 +30,12 @@ export class UserService {
   }
 
   save(){
-    window.localStorage.user = JSON.stringify(this.currentUser);
+    this.localStorage.setObject('user', this.currentUser);
   }
 
   logout(){    
     this.currentUser = undefined;
-    delete window.localStorage.user;
+    delete this.localStorage.remove('user');
   }
 
 

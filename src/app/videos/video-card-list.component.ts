@@ -8,8 +8,6 @@ import { GoTop } from '../video.directive';
 import { VideoCardItemComponent } from './video-card-item.component'
 import { VideoCardLoadingComponent } from './video-card-loading.component'
 
-declare var componentHandler: any;
-
 @Component({
     selector: 'video-card-list',
     template: `
@@ -53,7 +51,7 @@ export class VideoCardListComponent implements OnInit, OnDestroy, OnChanges, Aft
     }
 
     ngAfterViewInit() {            
-      componentHandler.upgradeDom();
+      this.videoService.upgradeDom();
     }
 
     ngOnChanges(changes: {[propertyName: string]: SimpleChange}){       

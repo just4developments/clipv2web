@@ -15,6 +15,7 @@ import { HTTP_PROVIDERS } from '@angular/http';
 import { EventService } from './event.service';
 import { UserService } from './user.service';
 import { VideoService } from './video.service';
+import { LocalStorage } from './localstorage.service';
 
 let config: ResponsiveConfigInterface = {
     breakPoints: {
@@ -40,12 +41,14 @@ let metaConfig = new MetaConfig({
 
 // Application wide providers
 export const APP_PROVIDERS = [
-  AppState,
+  AppState,  
   {
       provide: ResponsiveConfig,
       useFactory: () => new ResponsiveConfig(config)
   },
   ResponsiveState,
   Title, provide('meta.config', {useValue: metaConfig}), 
-  MetaService, EventService, VideoService, UserService
+  MetaService, 
+  provide(LocalStorage, {useClass: LocalStorage}),
+  EventService, VideoService, UserService
 ];

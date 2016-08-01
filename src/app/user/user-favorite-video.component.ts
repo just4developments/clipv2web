@@ -28,9 +28,10 @@ import { UserService } from '../user.service';
           </li>          
         </ul>
         <div class="mdl-card__supporting-text" *ngIf="!videos || videos.length === 0">
-          Không tìm thấy video nào
+          Bạn chưa có video nào trong danh sách yêu thích
         </div>
       </div>
+      <br/>
     `,
     styles: ['.mdl-card {min-height: 0px}'],
     directives: [ROUTER_DIRECTIVES]

@@ -4,20 +4,19 @@ import { CORE_DIRECTIVES } from '@angular/common';
 
 import { FacebookLoginComponent } from './facebook.component';
 import { UserMenuComponent } from './user';
-import { MainScrollDirective, MDL, GoTop, EnterDirective, SelectWhenFocusDirective, NavLeft } from './video.directive';
+import { MainScrollDirective, GoTop, EnterDirective, SelectWhenFocusDirective, NavLeft } from './video.directive';
 import { EventService } from './event.service';
 import { UserService } from './user.service';
 import { VideoService } from './video.service';
 import { SnackBarComponent } from './snack-bar.component';
 
-declare var componentHandler: any;
 declare var FB: any;
 
 @Component({
     selector: 'my-app',
     template: `
       <snack-bar></snack-bar>
-      <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header" mdl>
+      <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
         <div class="android-header mdl-layout__header mdl-layout__header--waterfall">
           <div class="mdl-layout__header-row">
             <a class="android-title mdl-layout-title" [routerLink]="['/']" go-top>
@@ -100,7 +99,7 @@ declare var FB: any;
         </div>  
       </div>
     `,
-    directives: [UserMenuComponent, MainScrollDirective, MDL, GoTop, NavLeft, ROUTER_DIRECTIVES, FacebookLoginComponent, SnackBarComponent, EnterDirective, SelectWhenFocusDirective, CORE_DIRECTIVES]
+    directives: [UserMenuComponent, MainScrollDirective, GoTop, NavLeft, ROUTER_DIRECTIVES, FacebookLoginComponent, SnackBarComponent, EnterDirective, SelectWhenFocusDirective, CORE_DIRECTIVES]
 })
 export class App implements AfterViewInit, OnInit, OnDestroy {
   txtSearch: string;
@@ -136,7 +135,7 @@ export class App implements AfterViewInit, OnInit, OnDestroy {
   }
 
   ngAfterViewInit() {            
-    componentHandler.upgradeDom();
+    this.videoService.upgradeDom();
   }
 
   search(){    

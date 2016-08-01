@@ -2,8 +2,6 @@ import { Component, OnInit, OnDestroy, ElementRef } from '@angular/core';
 
 import { EventService } from './event.service';
 
-declare var componentHandler: any;
-
 @Component({
     selector: 'snack-bar',
     template: `

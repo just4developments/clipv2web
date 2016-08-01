@@ -7,11 +7,8 @@ import { EventService } from '../event.service';
 import { HowlongPipe } from '../filter.pipe';
 import { UserService } from '../user.service';
 import { GoTop } from '../video.directive';
+import { getDOM, DomAdapter } from '@angular/platform-browser/src/dom/dom_adapter';
 import { FacebookCommentComponent, FacebookShareComponent, FacebookPlayerComponent, YoutubePlayerComponent, Html5PlayerComponent } from '../facebook.component';
-
-declare var location: any;
-declare var componentHandler: any;
-declare var window: any;
 
 @Component({
     selector: 'video-details',
@@ -60,7 +57,7 @@ declare var window: any;
           <div *ngFor="let k of videoService.keywords" class="{{hasExist(k._id) ? 'active' : ''}}" (click)="manageKeyword(k)">{{k.name}}</div>          
         </div>
         <hr style="clear: both"/>
-        <facebook-comment [link]="locationHref"></facebook-comment>
+        <facebook-comment [link]="document.getLocation().href"></facebook-comment>
       </div>
     `,
     pipes: [HowlongPipe],
@@ -70,12 +67,12 @@ export class VideoDetailsComponent implements OnChanges, OnInit, OnDestroy, Afte
   @Input() item: VideoDetails;
   isFavorite:boolean;
   isSpecial:boolean;
-  locationHref: string;
   gsub: any;
   isChecked: boolean= false;
   container: any;
+  document: DomAdapter = getDOM();
 
-  constructor(private metaService: MetaService, private videoService: VideoService, private eventService: EventService, private userService: UserService, private router: Router){
+  constructor(private metaService: MetaService, private videoService: VideoService, private eventService: EventService, private userService: UserService){
     
   }
 
@@ -110,7 +107,7 @@ export class VideoDetailsComponent implements OnChanges, OnInit, OnDestroy, Afte
   }
 
   ngAfterViewInit() {
-    this.container = window.document.querySelector('[scroll-bottom]');
+    this.container = this.document.query('[scroll-bottom]');
     this.container.scrollTop = 48;    
   }
 
@@ -175,11 +172,9 @@ export class VideoDetailsComponent implements OnChanges, OnInit, OnDestroy, Afte
   }
 
   ngOnChanges(changes: {[propertyName: string]: SimpleChange}){
-    this.locationHref = location.href;
-    
     this.metaService.setTitle(this.item.title);        
     this.metaService.setTag('og:type', 'video.other');
-    this.metaService.setTag('og:url', location.href);
+    this.metaService.setTag('og:url', this.document.getLocation().href);
     this.metaService.setTag('og:image',this.item.image);
     this.metaService.setTag('video:writer', this.item.creator);    
 

@@ -4,6 +4,10 @@ let app = express();
 var compression = require('compression');
 var unirest = require('unirest');
 
+const config = {
+	FB_ID: '291510107860506'
+};
+
 const URL = 'http://clipvnet.com:8000';
 
 let checkBot = (req, fcTrue, fcFalse) => {
@@ -95,12 +99,14 @@ app.get('/detail/:id/:title', (req, res) => {
 			  let content = 
 			  `<!DOCTYPE html>
 					<html lang="vi"	>
-						<head prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# video: http://ogp.me/ns/video#">
-							<meta property="og:type" content="video.other" />					
+						<head>							
+							<meta property="fb:app_id" content="${config.FB_ID}" />
+							<meta property="og:type" content="article" />
 							<meta property="og:url" content="${HOST}" />
 							<meta property="og:title" content="${v.title}" />
 							<meta property="og:image" content="${v.image}" />
-							<meta property="video:writer" content="${v.creator}" />
+							<meta property="article:author" content="${v.creator}" />
+							<meta property="article:publisher" content="ClipVNet" />							
 						</head>
 					</html>`;
 				res.send(content);

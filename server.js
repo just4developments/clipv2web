@@ -51,7 +51,7 @@ app.get('/sitemap.xml', (req, res) => {
 		  for(var r of res0.body){	  	  
 		  	cnt += `
 		  		<url>
-		        <loc>${HOST}/${r._id}/${r.title0}</loc>
+		        <loc>${HOST}/detail/${r._id}/${r.title0}?_escaped_fragment_=</loc>
 		        <changefreq>never</changefreq>
 		      </url>
 	      `;      
@@ -59,30 +59,24 @@ app.get('/sitemap.xml', (req, res) => {
 			fcDone(cnt);
 		});		
 	}
-	appendContent('/video/newest', (cnt0) => {
-		appendContent('/video/most', (cnt1) => {
-			appendContent('/video/hot', (cnt2) => {				
-				var cnt = `<?xml version="1.0" encoding="UTF-8"?>
-				<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-			    <url>
-			      <loc>${HOST}</loc>
-			      <changefreq>always</changefreq>
-			    </url>
-			    ${cnt0}
-			    <url>
-			      <loc>${HOST}/v/most</loc>
-			      <changefreq>monthly</changefreq>
-			    </url>
-			    ${cnt1}
-			    <url>
-			      <loc>${HOST}/v/hot</loc>
-			      <changefreq>monthly</changefreq>
-			    </url>
-			    ${cnt2}
-			  </urlset>`
-			  res.type('xml').send(cnt);
-			});
-		});		
+	appendContent('/video/newest', (cnt0) => {		
+		var cnt = `<?xml version="1.0" encoding="UTF-8"?>
+		<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+	    <url>
+	      <loc>${HOST}?_escaped_fragment_=</loc>
+	      <changefreq>always</changefreq>
+	    </url>	    
+	    <url>
+	      <loc>${HOST}/most?_escaped_fragment_=</loc>
+	      <changefreq>daily</changefreq>
+	    </url>
+	    <url>
+	      <loc>${HOST}/hot?_escaped_fragment_=</loc>
+	      <changefreq>daily</changefreq>
+	    </url>
+	    ${cnt0}
+	  </urlset>`
+	  res.type('xml').send(cnt);
 	});
 });
 app.get('/', handler);

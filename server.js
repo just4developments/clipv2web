@@ -7,15 +7,14 @@ var unirest = require('unirest');
 const URL = 'http://clipvnet.com:8000';
 
 let checkBot = (req, fcTrue, fcFalse) => {
-	// let agent = req.headers['user-agent'];
-	// if(agent && /visionutils|facebook|facebot|google|yahoo|bingbot|baiduspider|yandex|yeti|yodaobot|gigabot|ia_archiver|archive.org_bot|twitterbot/i.test(agent)){
-	// 	return fcTrue();
-	// }
-	// fcFalse();
+	let agent = req.headers['user-agent'];
+	if(agent && /visionutils|facebook|facebot|google|yahoo|bingbot|baiduspider|yandex|yeti|yodaobot|gigabot|ia_archiver|archive.org_bot|twitterbot/i.test(agent)){
+		return fcTrue(agent);
+	}
 	fcFalse();
 }
 
-app.use(require('prerender-node').set('prerenderToken', 'QQkE5hbB6CfQ0M4B2nzk'));
+// app.use(require('prerender-node').set('prerenderToken', 'QQkE5hbB6CfQ0M4B2nzk'));
 app.use(compression({ threshold: 0 }));
 app.use(express.static(__dirname + '/dist', {index: false}));
 
@@ -28,14 +27,6 @@ let page = (p, res) => {
 let temp = (p, res) => {
  res.sendFile(p, { root: __dirname + '/temp' });
 };
-
-let handler = (req, res) => {		
-	checkBot(req, () => {
-		page('index.html', res);
-	}, () => {
-		page('index.html', res);
-	});
-}
 
 app.get('/sitemap.xml', (req, res) => {
 	var HOST = URL.replace(/:8000/, '');
@@ -59,7 +50,7 @@ app.get('/sitemap.xml', (req, res) => {
 			fcDone(cnt);
 		});		
 	}
-	appendContent('/video/newest', (cnt0) => {		
+	appendContent('/video/newest', (cnt0) => {
 		var cnt = `<?xml version="1.0" encoding="UTF-8"?>
 		<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 	    <url>
@@ -79,22 +70,80 @@ app.get('/sitemap.xml', (req, res) => {
 	  res.type('xml').send(cnt);
 	});
 });
-app.get('/', handler);
-app.get('/my-video', handler);
-app.get('/detail/:id/:title', handler);
-app.get('/keyword/:keyword/:title', handler);
-app.get('/search/:txtSearch', handler);
-app.get('/:mode', handler);
+app.get('/', (req, res) => {		
+	checkBot(req, () => {
+		page('index.html', res);
+	}, () => {
+		page('index.html', res);
+	});
+});
+app.get('/my-video', (req, res) => {		
+	checkBot(req, () => {
+		page('index.html', res);
+	}, () => {
+		page('index.html', res);
+	});
+});
+app.get('/detail/:id/:title', (req, res) => {
+	var HOST = URL.replace(/:8000/, '') + req.url;
+	checkBot(req, (agent) => {
+		if(agent.includes('facebook')){
+			unirest.get(`${URL}/video/${req.params.id}`)
+		  .headers({'decrypt': '1'})
+			.end(function (res0) {
+				var v = res0.body;
+			  let content = 
+			  `<!DOCTYPE html>
+					<html lang="vi"	>
+						<head prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# video: http://ogp.me/ns/video#">
+							<meta property="og:type" content="video.other" />					
+							<meta property="og:url" content="${HOST}" />
+							<meta property="og:title" content="${v.title}" />
+							<meta property="og:image" content="${v.image}" />
+							<meta property="video:writer" content="${v.creator}" />
+						</head>
+					</html>`;
+				res.send(content);
+			});					
+		}else{
+			page('index.html', res);
+		}		
+	}, () => {
+		page('index.html', res);
+	});
+});
+app.get('/keyword/:keyword/:title', (req, res) => {		
+	checkBot(req, () => {
+		page('index.html', res);
+	}, () => {
+		page('index.html', res);
+	});
+});
+app.get('/search/:txtSearch', (req, res) => {		
+	checkBot(req, () => {
+		page('index.html', res);
+	}, () => {
+		page('index.html', res);
+	});
+});
+app.get('/:mode', (req, res) => {		
+	checkBot(req, () => {
+		page('index.html', res);
+	}, () => {
+		page('index.html', res);
+	});
+});
 // app.get('/:id/:title', (req, res) => {
 // 	if(req.headers['user-agent'].includes('facebookexternalhit')){
 // 		let content = `
-// 			<html>
-// 				<head>
+// 			<!DOCTYPE html>
+// 			<html lang="vi"	>
+// 				<head prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# video: http://ogp.me/ns/video#">
 // 					<meta property="og:type" content="article" />					
 // 					<meta property="og:url" content="http://kenh14.vn/news-2016072523515093.chn" />
 // 					<meta property="og:title" content="17 tuổi, nữ sinh tài năng này đã sáng lập hội thảo Mô phỏng Liên Hợp Quốc cho các bạn trẻ Việt Nam" />
-// 					<meta property="og:description" content="17 tuổi, sáng lập hội thảo Mô phỏng Liên Hợp Quốc lớn nhất Việt Nam, đang thực tập tại Ernst&amp;Young, làm CTV cho một dự án của UNESCO. Đó chính là những thông tin cơ bản nhất về cô bạn thú vị này." />
 // 					<meta property="og:image" content="http://kenh14cdn.com/thumb_w/600/2016/img-0311-1469464784467-1416-0-2917-2912-crop-1469465362749.jpg" />
+// 					<meta property="video:writer" content="http://kenh14cdn.com/thumb_w/600/2016/img-0311-1469464784467-1416-0-2917-2912-crop-1469465362749.jpg" />
 // 				</head>
 // 			</html>
 // 		`;

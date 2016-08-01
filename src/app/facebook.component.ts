@@ -8,7 +8,6 @@ import {LocalStorage} from "./localstorage.service";
 import {Config} from './config';
 
 declare var FB:any;
-declare var ENV: any;
 
 class AbsFacebookComponent implements OnInit, OnDestroy, AfterViewInit {
   gsub:any;
@@ -133,7 +132,7 @@ export class FacebookLoginComponent implements OnInit, OnDestroy {
   gsub:any;
   @Input() type: number = 0;
 
-  constructor(private localStorage: LocalStorage, private userService: UserService, private eventService: EventService) {    
+  constructor(private config:Config, private localStorage: LocalStorage, private userService: UserService, private eventService: EventService) {    
     
   }
 
@@ -146,7 +145,7 @@ export class FacebookLoginComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     FB.init({ 
-      appId: Config.FB_APP_ID,
+      appId: this.config.FB_APP_ID,
       status: true, 
       cookie: true, 
       xfbml: true,
@@ -205,22 +204,23 @@ export class FacebookLoginComponent implements OnInit, OnDestroy {
 
 @Component({
     selector: 'facebook-page',
-    template: '<div class="fb-page" data-href="' + Config.FB_FANPAGE + '" data-tabs="timeline" data-height="70" data-small-header="false" data-adapt-container-width="true" data-hide-cover="true" data-show-facepile="false"><blockquote cite="' + Config.FB_FANPAGE + '" class="fb-xfbml-parse-ignore"><a href="' + Config.FB_FANPAGE + '">Clipvnet.com</a></blockquote></div>',
+    template: '<div class="fb-page" [attr.data-href]="config.FB_FANPAGE" data-tabs="timeline" data-height="70" data-small-header="false" data-adapt-container-width="true" data-hide-cover="true" data-show-facepile="false"><blockquote [attr.cite]="config.FB_FANPAGE" class="fb-xfbml-parse-ignore"><a [href]="config.FB_FANPAGE">Clipvnet.com</a></blockquote></div>',
     directives: [ROUTER_DIRECTIVES]
 })
 export class FacebookPageComponent extends AbsFacebookComponent {
-  constructor(protected eventService: EventService, protected e: ElementRef) {    
+  constructor(protected eventService: EventService, protected e: ElementRef, private config:Config) {        
     super(eventService, e, 'facebook-page');
+    console.log(this.config);
   }
 }
 
 @Component({
     selector: 'facebook-like',
-    template: '<div class="fb-like" data-href="' + Config.FB_FANPAGE + '" data-layout="standard" data-action="like" data-size="small" data-show-faces="true" data-share="false"></div>',
+    template: '<div class="fb-like" [attr.data-href]="config.FB_FANPAGE" data-layout="standard" data-action="like" data-size="small" data-show-faces="true" data-share="false"></div>',
     directives: [ROUTER_DIRECTIVES]
 })
 export class FacebookLikeComponent extends AbsFacebookComponent {
-  constructor(protected eventService: EventService, protected e: ElementRef) {    
+  constructor(protected eventService: EventService, protected e: ElementRef, private config:Config) {    
     super(eventService, e, 'facebook-like');
   }
 }

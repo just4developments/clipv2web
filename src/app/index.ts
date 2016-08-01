@@ -12,6 +12,7 @@ import { LocationStrategy, PathLocationStrategy } from '@angular/common';
 import { Title } from '@angular/platform-browser';
 import { HTTP_PROVIDERS } from '@angular/http';
 
+import { Config } from './config';
 import { EventService } from './event.service';
 import { UserService } from './user.service';
 import { VideoService } from './video.service';
@@ -40,6 +41,7 @@ let metaConfig = new MetaConfig({
 
 // Application wide providers
 export const APP_PROVIDERS = [
+  Config,
   AppState,  
   {
       provide: ResponsiveConfig,

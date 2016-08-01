@@ -8,7 +8,7 @@ import { HowlongPipe } from '../filter.pipe';
 @Component({
     selector: 'video-card-item',
     template: `
-    <a [routerLink]="['/detail', item._id, item.title0]" class="nothing">
+    <a [routerLink]="['/detail', item._id, item.title0 + '#!']" class="nothing">
       <div class="mdl-card__title">
          <h4 class="mdl-card__title-text main-color">{{item.title}}</h4>
       </div>      

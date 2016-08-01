@@ -11,7 +11,7 @@ import { LocalStorage } from './localstorage.service';
 export class UserService {
 	public currentUser: any;
 
-  constructor(private localStorage: LocalStorage, private http: Http){
+  constructor(private config: Config, private localStorage: LocalStorage, private http: Http){
 
 	}
 
@@ -20,7 +20,7 @@ export class UserService {
 	}
 
   loginSystem(user: any): Observable<any>{
-  	return this.http.post(Config.HOST + '/login', {token: user.accessToken}, new RequestOptions({ headers: new Headers({ 'Content-Type': 'application/json' }) }))
+  	return this.http.post(this.config.HOST + '/login', {token: user.accessToken}, new RequestOptions({ headers: new Headers({ 'Content-Type': 'application/json' }) }))
       .map((res) => { return HashService.decrypt(res); } )
       .catch(this.handleError)    
   }

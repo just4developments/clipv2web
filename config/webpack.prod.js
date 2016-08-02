@@ -168,7 +168,7 @@ module.exports = webpackMerge(commonConfig, {
         minifyJS: true,
         collapseWhitespace: true,
         removeComments: true,
-        removeAttributeQuotes: true
+        removeAttributeQuotes: false
       }
     }),
 

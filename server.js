@@ -99,14 +99,13 @@ app.get('/detail/:id/:title', (req, res) => {
 			  let content = 
 			  `<!DOCTYPE html>
 					<html lang="vi"	>
-						<head xmlns="http://www.w3.org/1999/xhtml" xmlns:og="http://ogp.me/ns#" xmlns:fb="http://www.facebook.com/2008/fbml">							
+						<head prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# article: http://ogp.me/ns/article#">
 							<meta property="fb:app_id" content="${config.FB_ID}" />
 							<meta property="og:type" content="article" />
 							<meta property="og:url" content="${HOST}" />
 							<meta property="og:title" content="${v.title}" />
 							<meta property="og:image" content="${v.image}" />
-							<meta property="article:author" content="${v.creator}" />
-							<meta property="article:publisher" content="ClipVNet" />
+							<meta property="og:site_name" content="ClipVNet.com" />
 						</head>
 					</html>`;
 				res.send(content);

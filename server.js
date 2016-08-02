@@ -46,7 +46,7 @@ app.get('/sitemap.xml', (req, res) => {
 		  for(var r of res0.body){	  	  
 		  	cnt += `
 		  		<url>
-		        <loc>${HOST}/detail/${r._id}/${r.title0}?_escaped_fragment_=</loc>
+		        <loc>${HOST}/detail/${r._id}/${r.title0}</loc>
 		        <changefreq>never</changefreq>
 		      </url>
 	      `;      
@@ -58,15 +58,15 @@ app.get('/sitemap.xml', (req, res) => {
 		var cnt = `<?xml version="1.0" encoding="UTF-8"?>
 		<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 	    <url>
-	      <loc>${HOST}?_escaped_fragment_=</loc>
+	      <loc>${HOST}</loc>
 	      <changefreq>always</changefreq>
 	    </url>	    
 	    <url>
-	      <loc>${HOST}/most?_escaped_fragment_=</loc>
+	      <loc>${HOST}/most</loc>
 	      <changefreq>daily</changefreq>
 	    </url>
 	    <url>
-	      <loc>${HOST}/hot?_escaped_fragment_=</loc>
+	      <loc>${HOST}/hot</loc>
 	      <changefreq>daily</changefreq>
 	    </url>
 	    ${cnt0}
@@ -99,14 +99,14 @@ app.get('/detail/:id/:title', (req, res) => {
 			  let content = 
 			  `<!DOCTYPE html>
 					<html lang="vi"	>
-						<head>							
+						<head xmlns="http://www.w3.org/1999/xhtml" xmlns:og="http://ogp.me/ns#" xmlns:fb="http://www.facebook.com/2008/fbml">							
 							<meta property="fb:app_id" content="${config.FB_ID}" />
 							<meta property="og:type" content="article" />
 							<meta property="og:url" content="${HOST}" />
 							<meta property="og:title" content="${v.title}" />
 							<meta property="og:image" content="${v.image}" />
 							<meta property="article:author" content="${v.creator}" />
-							<meta property="article:publisher" content="ClipVNet" />							
+							<meta property="article:publisher" content="ClipVNet" />
 						</head>
 					</html>`;
 				res.send(content);
